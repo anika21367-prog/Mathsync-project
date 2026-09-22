@@ -19,17 +19,15 @@ C++ programming language, fstream, Git/GitHub
 # Set-up:
 This is a terminal based system, so the project code only needs to be compiled with the g++ compiler. The main task is to commit changes on our system as we work on it.
 
-# Current Status
-Phase 2 (implementation) in progress. Grid storage module started. 
-Formula evaluator, dependency tracker, and history/sync modules not yet started.
-
 # Major Features/Parts:
 1. Grid Storage for formulas
 2. Formula Evaluator (using stack)
 3. Dependency Tracker
 4. Search History
 
-
+# Current Status
+Phase 2 (implementation) in progress. Grid storage module started. 
+Formula evaluator, dependency tracker, and history/sync modules not yet started.
 
 # Grid Storage
 "Module under progress." 
