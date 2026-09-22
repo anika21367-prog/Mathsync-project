@@ -2,7 +2,7 @@
 This is a terminal-based, real-time collaborative mini spreadsheet built using C++ for Data Structures.
 
 # The Objectives behind our project:
-1. To create a real time collaborative system that lets multiple users work together on a same shared file.
+1. To create a near-real time collaborative system that lets multiple users work together on a same shared file.
 2. Build a computation engine that can parse, process and evaluate formulas.
 3. To sync user inputs anytime someone makes changes in the system spreadsheet.
 4. To get to know real applications of core Data structures and Object Orientation programming topics.
