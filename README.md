@@ -1,4 +1,4 @@
-# Mathsync-project
+# Mathsync-DSA project
 This is a terminal-based, real-time collaborative mini spreadsheet built using C++ for Data Structures.
 
 # The Objectives behind our project:
