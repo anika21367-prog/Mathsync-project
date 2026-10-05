@@ -14,3 +14,7 @@ CELL grid[ROWS][COLMS];
 bool parsecellName(const string &cellName, int &row, int &colm){
    if (cellName.size()< 2)
      return false;
+   char colmChar= toupper(cellName[0]);
+   if (colmChar< 'A' || colmChar> ('A' + colms- 1))
+     return false;
+   colm
