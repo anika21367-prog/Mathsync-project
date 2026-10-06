@@ -10,7 +10,7 @@ const int ROWS=5;
 const int COLS=5;
 
 struct Cell{
-    string con="";
+    string cont="";
     bool isFormula=false;
 };
  Cell grid[ROWS][COLS];
