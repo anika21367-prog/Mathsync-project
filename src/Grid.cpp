@@ -48,4 +48,9 @@ void viewGrid(){
    for (int r= 0; r< ROWS; r++){
        cout<< setw(5)<< left<< (r+1);
        for (int c= 0; c< COLMS; c++){
-           string display
+           string display= grid[r][c].content.empty() ? "-" : grid[r][c].content;
+           cout<< setw(10)<< left<< display;
+       }
+   cout<< endl;
+   }
+}
