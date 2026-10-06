@@ -37,3 +37,12 @@ bool parseCellName(const string &cellName, int &row, int &col) {
 
     return true;
 }
+
+struct Change {
+    string cellName;
+    string oldContent;
+    string newContent;
+};
+
+stack<Change> undoStack;
+stack<Change> redoStack;
