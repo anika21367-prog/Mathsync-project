@@ -40,3 +40,15 @@ bool parsecCellName(const string &cellName, int &row, int &col)
   row = rowNum - 1;
   return true;
 }
+void setCell(const string &cellName, const string &content)
+{
+  int row, col;
+  if(!parseCellName(cellName, row, col))
+  {
+      cout << "Invalid Cell reference: " << cellName << endl;
+      return;
+  }
+  grid[row][col].content = content;
+  grid[row][col].isFormula = (!content.empty() && content[0] == '=');
+  cout << cellName << " updated to " << endl;
+}
