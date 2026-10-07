@@ -26,3 +26,29 @@ bool parseCellname(const string &cellname, int &row, int &col){
     for(char c: rowPart){
         if(!isdigit(c)) return false;
 }
+int rowNum=stoi(rowPart);
+    if(rowNum<1||rowNum>ROWS) return false;
+    row=rowNum-1;
+    return true;
+ }
+
+ struct DependentNode{
+    string cellname;
+    DependentNode *next;
+ };
+ DependentNode *dependents[ROWS][COLS]={};
+
+ DependentNode *&listOf(const string &cellname){
+    int row, col;
+    parseCellname(cellname, row, col);
+    return dependents[row][col];
+ }
+
+ string makecellname(int row, int col){
+    return string(1, 'A'+col)+to_string(row+1);
+ }
+
+ string upper(string s){
+    for(char &c:s)c=toupper(c);
+    return s;
+}
