@@ -1,6 +1,6 @@
-Mathsync-DSA project
+#Mathsync-DSA project
 This is a terminal-based, collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking.
-The Objectives behind our project:
+#The Objectives behind our project:
 To create a near-real-time collaborative system that lets multiple users work together on the same shared file.
 Build a computation engine that can parse, process and evaluate formulas.
 To sync user inputs anytime someone makes changes in the system spreadsheet.
