@@ -2,7 +2,7 @@
 
 This is a terminal-based, collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking.
 
-**#The Objectives behind our project:**
+**The Objectives behind our project:**
 
 To create a near-real-time collaborative system that lets multiple users work together on the same shared file.
 Build a computation engine that can parse, process and evaluate formulas.
@@ -47,6 +47,6 @@ Current Status
 Phase 2 (implementation) in progress.
 Grid Storage: core structure implemented (SET/VIEW), minor fixes pending
 Formula Evaluator: stack-based infix-to-postfix conversion and evaluation implemented standalone; integration with grid pending
-Dependency Tracker: dependency list structure and cell-name parsing implemented; dependency registration and propagation logic in progress
+Dependency Tracker: dependency list structure and cell-name parsing implemented; dependency registration and propagation logic in progress.
 History/Undo/Sync: data structures set up (undo/redo stacks); core logic not yet implemented
-Not yet started: integration of all modules into a single codebase
+Not yet started: integration of all modules into a single codebase.
