@@ -1,18 +1,22 @@
-#Mathsync-DSA project
+**#Mathsync-DSA project**
 This is a terminal-based, collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking.
-#The Objectives behind our project:
+**#The Objectives behind our project:**
+
 To create a near-real-time collaborative system that lets multiple users work together on the same shared file.
 Build a computation engine that can parse, process and evaluate formulas.
 To sync user inputs anytime someone makes changes in the system spreadsheet.
 To get to know real applications of core Data Structures and Object-Oriented Programming topics.
-Team Members
+
+**Team Members**
 Anika Sharma,
 Pushpendra Gupta,
 Riddhi Gupta,
 Akarshak Singh
-Technologies Used:
+
+**Technologies Used:**
 C++ programming language, fstream, Git/GitHub
-System Architecture
+
+**System Architecture**
 Terminal Interface — user enters commands
 Command Parser — reads and interprets commands
 Core Engine:
@@ -22,7 +26,8 @@ Dependency Tracker (Linked List + Queue)
 Recalculation & History (Queue, Stack, Linked List)
 Shared File Storage (SYNC / LOAD)
 Flow: User enters a command → Command parser interprets it and routes it to the core engine → Core engine processes grid, formula, or dependency logic → Recalculation engine updates dependent cells in correct order → Changes synced to team via SYNC/LOAD.
-Set-up:
+
+**Set-up:**
 This is a terminal-based system, so the project code only needs to be compiled with the g++ compiler, e.g.:
 g++ main.cpp -o mathsync
 ./mathsync
