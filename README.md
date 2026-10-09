@@ -1,4 +1,5 @@
 **#Mathsync-DSA project**
+
 This is a terminal-based, collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking.
 **#The Objectives behind our project:**
 
