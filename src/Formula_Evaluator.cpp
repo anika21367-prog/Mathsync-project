@@ -52,3 +52,49 @@ void setCell(const string &cellName, const string &content)
   grid[row][col].isFormula = (!content.empty() && content[0] == '=');
   cout << cellName << " updated to " << endl;
 }
+
+vector <string> tokenize(const string &expr)
+{
+  vector<string>tokens;
+  size_t i  = 0;
+
+  while(i < expr.size())
+  {
+    char c = expr[i];
+    if(isspace(c))
+    {
+      i++;
+    }
+    else if(isdigit(c) || c=='.')
+    {
+      string num;
+      while(i < expr.size() && (isdigit(expr[i] || expr[i] == '.'))
+        {
+          num += expr[i++];
+        }
+      tokens.push_back(num);
+    }
+  else if(isalpha(c))
+  {
+    string name;
+    name += toupper(c);
+    i++;
+    while(i < expr.size() && isdigit(expr[i]))
+    {
+      name += expr[i++];
+    }
+    tokens.push_back(name);
+  }
+ else if(c == '+' || c == '-' || c == '*' || c == '/')
+ {
+    tokens.push_back(string(1,c));
+    i++;
+ }
+ else
+ {
+    tokens.push_back(string(1,c));
+    i++;
+ }
+}
+  return tokens;
+}
