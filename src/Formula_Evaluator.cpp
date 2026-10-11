@@ -92,14 +92,70 @@ vector <string> tokenize(const string &expr)
  }
  else if(c == '+' || c == '-' || c == '*' || c == '/')
  {
-    tokens.push_back(string(1,c));
-    i++;
- }
- else
- {
-    tokens.push_back(string(1,c));
-    i++;
- }
+    bool unary = false;
+    if( c == '-')
+    {
+      if(tokens.empty())
+      {
+        unary = true;
+      }
+    else
+    {
+      const string &prev = tokens.back();
+      if(prev == "(" || isOperator(prev))
+      {
+        unary = true;
+      }
+    }
+    }
+    if(unary)
+    {
+      tokens.push_back("(");
+      tokens.push_back("0");
+      tokens.push_back("-");
+      i++;
+      while(i < expr.size() && isspace(expr[i])) 
+      {
+        i++;
+      }
+    if(i < expr.size() && (isdigit(expr[i] || expr[i] == '.'))
+    {
+      string num;
+      while(i < expr.size() && isdigit(expr[i] || expr[i] == '.'))
+      {
+        num += expr[i++];
+      }
+      tokens.push_back(num);
+      tokens.push_back(")");
+    }
+    else if(i < expr.size() && isalpha(expr[i]))
+    {
+      string name;
+      name += toupper(expr[i++]);
+
+      while(i < expr.size() && isdigit(expr[i]))
+      {
+        name += expr[i++];
+      }
+     tokens.push_back(name);
+     tokens.push_back(")");
+   }
+  else
+  {
+    throw runtime_error("Invalid use of '-'");
+  }
 }
-  return tokens;
+else
+{
+  tokens.push_back(string(1,c));
+  i++;
 }
+}
+else
+{
+  throw runtime_error (string ("Unexpected character ' ") + c + " ' ");
+}
+}
+return tokens;
+}
+
