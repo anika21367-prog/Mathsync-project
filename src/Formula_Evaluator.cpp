@@ -65,7 +65,7 @@ vector <string> tokenize(const string &expr)
     {
       i++;
     }
-    else if(isdigit(c) || c=='.')
+    else if(isdigit(c) || c =='.')
     {
       string num;
       while(i < expr.size() && (isdigit(expr[i] || expr[i] == '.'))
@@ -85,6 +85,11 @@ vector <string> tokenize(const string &expr)
     }
     tokens.push_back(name);
   }
+ else if(c == '(' || c == ')')
+ {
+   tokens.push_back(string(1,c));
+   i++;
+ }
  else if(c == '+' || c == '-' || c == '*' || c == '/')
  {
     tokens.push_back(string(1,c));
