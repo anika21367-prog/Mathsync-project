@@ -8,15 +8,13 @@ const int ROWS = 5;
 const int COLS = 5;
 const int TOTAL = ROWS * COLS;
 
-// Standalone grid: replace this with your team's grid when merging.
-struct Cell {
     string content;
     bool isFormula = false;
 };
 Cell grid[ROWS][COLS];
 
 struct Node {
-    int cell;                 // Number of the dependent cell
+    int cell;             
     Node *next;
 };
 Node *head[TOTAL] = {};       // One linked list for each cell
@@ -39,10 +37,7 @@ struct SimpleQueue {
         return value;
     }
 };
-// Each traversal adds a cell at most once, so TOTAL slots are enough.
 
-// Cell numbers: A1=0, B1=1, ..., E1=4, A2=5, ..., E5=24.
-// Return -1 for an invalid name. Accept A1 or a1, but not A01.
 int cellNumber(string name) {
     if (name.length() != 2) return -1;
 
@@ -64,7 +59,6 @@ string cellName(int cell) {
     return name;
 }
 
-// If B1 uses A1, add B1 to A1's list.
 void addDependent(int source, int dependent) {
     Node *current = head[source];
     while (current != nullptr) {
