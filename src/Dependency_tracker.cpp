@@ -1,54 +1,78 @@
 /*Dependency Tracker module is under Anika. Dependency Tracker is implemented using linked list and queues.*/
-#include<iostream>
-#include<queue>
-#include<vector>
-#include<string>
-#include<iomanip>
-#include<cctype>
+#include <iostream>
+#include <string>
+#include <iomanip>
 using namespace std;
-const int ROWS=5;
-const int COLS=5;
 
-struct Cell{
-    string cont="";
-    bool isFormula=false;
+const int ROWS = 5;
+const int COLS = 5;
+const int TOTAL = ROWS * COLS;
+
+// Standalone grid: replace this with your team's grid when merging.
+struct Cell {
+    string content;
+    bool isFormula = false;
 };
- Cell grid[ROWS][COLS];
-bool parseCellname(const string &cellname, int &row, int &col){
-    if (cellname.size()<2)
-    return false;
+Cell grid[ROWS][COLS];
 
-    char colChar=toupper(cellname[0]);
-    if(colChar<'A'||colChar>('A'+COLS-1)) return false;
-    col=colChar-'A';
+struct Node {
+    int cell;                 // Number of the dependent cell
+    Node *next;
+};
+Node *head[TOTAL] = {};       // One linked list for each cell
 
-    string rowPart=cellname.substr(1);
-    for(char c: rowPart){
-        if(!isdigit(c)) return false;
+struct SimpleQueue {
+    int items[TOTAL];
+    int front = 0;
+    int rear = 0;
+
+    bool empty() {
+        return front == rear;
+    }
+    void push(int value) {
+        items[rear] = value;
+        rear++;
+    }
+    int pop() {
+        int value = items[front];
+        front++;
+        return value;
+    }
+};
+// Each traversal adds a cell at most once, so TOTAL slots are enough.
+
+// Cell numbers: A1=0, B1=1, ..., E1=4, A2=5, ..., E5=24.
+// Return -1 for an invalid name. Accept A1 or a1, but not A01.
+int cellNumber(string name) {
+    if (name.length() != 2) return -1;
+
+    char column = name[0];
+    if (column >= 'a' && column <= 'z') {
+        column = column - 'a' + 'A';
+    }
+    char row = name[1];
+    if (column < 'A' || column >= 'A' + COLS) return -1;
+    if (row < '1' || row >= '1' + ROWS) return -1;
+
+    return (row - '1') * COLS + (column - 'A');
 }
-int rowNum=stoi(rowPart);
-    if(rowNum<1||rowNum>ROWS) return false;
-    row=rowNum-1;
-    return true;
- }
 
- struct DependentNode{
-    string cellname;
-    DependentNode *next;
- };
- DependentNode *dependents[ROWS][COLS]={};
+string cellName(int cell) {
+    string name;
+    name += char('A' + cell % COLS);
+    name += char('1' + cell / COLS);
+    return name;
+}
 
- DependentNode *&listOf(const string &cellname){
-    int row, col;
-    parseCellname(cellname, row, col);
-    return dependents[row][col];
- }
-
- string makecellname(int row, int col){
-    return string(1, 'A'+col)+to_string(row+1);
- }
-
- string upper(string s){
-    for(char &c:s)c=toupper(c);
-    return s;
+// If B1 uses A1, add B1 to A1's list.
+void addDependent(int source, int dependent) {
+    Node *current = head[source];
+    while (current != nullptr) {
+        if (current->cell == dependent) return;
+        current = current->next;
+    }
+    Node *newNode = new Node;
+    newNode->cell = dependent;
+    newNode->next = head[source];
+    head[source] = newNode;
 }
