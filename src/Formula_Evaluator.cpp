@@ -142,3 +142,19 @@ bool toPostfix(string tokens[], int count, string postfix[],
         postfix[length++] = operators[top--];
     }
     return true;
+
+
+bool evaluateExpression(string expression, double &result, string &error,
+                        bool visiting[ROWS][COLS]);
+bool getCellValue(string name, double &result, string &error,
+                  bool visiting[ROWS][COLS]) {
+    int row, col;
+    if (!parseCellName(name, row, col)) {
+        error = "Invalid cell reference: " + name;
+        return false;
+    }
+    if (visiting[row][col]) {
+        error = "Circular reference at " + name;
+        return false;
+    }
+
