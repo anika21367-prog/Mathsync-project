@@ -74,5 +74,28 @@ bool tokenize(string expression, string tokens[], int &count, string &error) {
                 return false;
             }
             tokens[count++] = number;
-
+} else if (isLetter(ch)) {
+            string name;
+            name += ch;
+            i++;
+            while (i < int(expression.length()) && isDigit(expression[i])) {
+                name += expression[i];
+                i++;
+            }
+            int row, col;
+            if (!parseCellName(name, row, col)) {
+                error = "Invalid cell reference: " + name;
+                return false;
+            }
+            tokens[count++] = name;
+        } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/' ||
+                   ch == '(' || ch == ')') {
+            tokens[count++] = string(1, ch);
+            i++;
+        } else {
+            error = "Unexpected character: " + string(1, ch);
+            return false;
+        }
+    }
+    return true;
 
