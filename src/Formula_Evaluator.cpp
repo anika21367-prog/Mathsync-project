@@ -117,3 +117,17 @@ bool toPostfix(string tokens[], int count, string postfix[],
             }
             if (top == -1) { error = "Mismatched brackets"; return false; }
             top--;
+        } else if (isOperator(token)) {
+            if (needValue) {
+                if (token != "-") { error = "Expected a number or cell"; return false; }
+                // Unary minus needs ONE operand, unlike subtraction.
+                operators[++top] = "~";
+            } else {
+                while (top >= 0 && operators[top] != "(" &&
+                       precedence(operators[top]) >= precedence(token)) {
+                    postfix[length++] = operators[top--];
+                }
+                operators[++top] = token;
+                needValue = true;
+            }
+
