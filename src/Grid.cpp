@@ -5,7 +5,8 @@
 #include<iomanip>
 using namespace std;
 const int ROWS= 5;
-const int COLMS= 5;
+const int COLS= 5;
+const int TOTAL= ROWS * COLS
 struct cell{
    string content= "";
    bool isFormula= false;
