@@ -14,5 +14,14 @@ struct Cell{
     string content;
     bool isFormula = false;
 };
-cell grid[ROWS][COLS];
+Cell grid[ROWS][COLS];
 
+bool parseCellName(string name, int &row, int &col) {
+    if (name.length() != 2) return false;
+    char letter = name[0];
+    if (letter >= 'a' && letter <= 'z') letter = letter - 'a' + 'A';
+    if (letter < 'A' || letter >= 'A' + COLS) return false;
+    if (name[1] < '1' || name[1] >= '1' + ROWS) return false;
+    col = letter - 'A';
+    row = name[1] - '1';
+    return true;
