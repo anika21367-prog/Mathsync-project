@@ -50,3 +50,29 @@ bool readNumber(string text, double &number) {
     return input.eof() && isfinite(number);
 }
 
+bool tokenize(string expression, string tokens[], int &count, string &error) {
+    count = 0;
+    if (expression.length() > MAX) {
+        error = "Formula is too long (maximum 200 characters after '=')";
+        return false;
+    }
+    int i = 0;
+    while (i < int(expression.length())) {
+        char ch = expression[i];
+        if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
+            i++;
+        } else if (isDigit(ch) || ch == '.') {
+            string number;
+            while (i < int(expression.length()) &&
+                   (isDigit(expression[i]) || expression[i] == '.')) {
+                number += expression[i];
+                i++;
+            }
+            double value;
+            if (!readNumber(number, value)) {
+                error = "Invalid number: " + number;
+                return false;
+            }
+            tokens[count++] = number;
+
+
