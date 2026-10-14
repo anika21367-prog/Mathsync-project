@@ -61,39 +61,28 @@ void viewGrid(){
         cout << endl;
     }
 }
-int main()
-{
+int main(){
     string command;
-
     cout << "MathSync - Grid Module" << endl;
     cout << "Commands: SET, VIEW, EXIT" << endl;
-
-    while (true)
-    {
+    while (true){
         cout << "\nEnter command: ";
         cin >> command;
-
-        if (command == "SET")
-        {
+        if (command == "SET"){
             string name, content;
             cin >> name >> content;
-
             setCell(name, content);
         }
-        else if (command == "VIEW")
-        {
+        else if (command == "VIEW"){
             viewGrid();
         }
-        else if (command == "EXIT")
-        {
+        else if (command == "EXIT"){
             break;
         }
-        else
-        {
+        else{
             cout << "Unknown command." << endl;
         }
     }
-
     return 0;
 }
 
