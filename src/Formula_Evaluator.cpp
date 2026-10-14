@@ -10,4 +10,9 @@ const int ROWS = 5;
 const int COLS = 5;
 const int MAX = 200;
 
+struct Cell{
+    string content;
+    bool isFormula = false;
+};
+cell grid[ROWS][COLS];
 
