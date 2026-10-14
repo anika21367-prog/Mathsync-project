@@ -50,6 +50,18 @@ void setCell(string name, string content){
     cout << cellName(cell) << " updated to "
          << content << endl;
 }
+void viewGrid()
+{
+    cout << left << setw(6) << "";
+
+    for (int col = 0; col < COLS; col++)
+        cout << setw(16) << char('A' + col);
+
+    cout << endl;
+
+    for (int row = 0; row < ROWS; row++)
+    {
+        cout << setw(6) << row + 1;
    
 
 
