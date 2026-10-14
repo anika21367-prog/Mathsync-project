@@ -99,3 +99,21 @@ bool tokenize(string expression, string tokens[], int &count, string &error) {
     }
     return true;
 
+bool toPostfix(string tokens[], int count, string postfix[],
+               int &length, string &error) {
+    string operators[MAX];
+    int top = -1;
+    length = 0;
+    bool needValue = true;
+    for (int i = 0; i < count; i++) {
+        string token = tokens[i];
+        if (token == "(") {
+            if (!needValue) { error = "Missing operator before '('"; return false; }
+            operators[++top] = token;
+        } else if (token == ")") {
+            if (needValue) { error = "Missing value before ')'"; return false; }
+            while (top >= 0 && operators[top] != "(") {
+                postfix[length++] = operators[top--];
+            }
+            if (top == -1) { error = "Mismatched brackets"; return false; }
+            top--;
