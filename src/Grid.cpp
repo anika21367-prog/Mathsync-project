@@ -29,5 +29,7 @@ string cellName(int cell){
    name += char('1' + cell / COLS);
    return name;
 }
+void setCell(string name, string content){
+   
 
 
