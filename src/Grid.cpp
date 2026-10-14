@@ -39,18 +39,4 @@ void setCell(const string &cellName, const string &content){
    grid[row][colm].isFormula= (!content.empty() && content[0]== '=');
    cout<< cellName<<"updated to<< content<< endl;
 }
-void viewGrid(){
-   cout<<"     ";
-   for (int c= 0; c< COLMS; c++){
-       cout<< setw(10)<< left<< string(1, 'A+c');
-   }
-   cout<< endl;
-   for (int r= 0; r< ROWS; r++){
-       cout<< setw(5)<< left<< (r+1);
-       for (int c= 0; c< COLMS; c++){
-           string display= grid[r][c].content.empty() ? "-" : grid[r][c].content;
-           cout<< setw(10)<< left<< display;
-       }
-   cout<< endl;
-   }
-}
+
