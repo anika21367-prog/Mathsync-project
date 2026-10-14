@@ -31,47 +31,33 @@ string cellName(int cell){
 }
 void setCell(string name, string content){
    int cell = cellNumber(name);
-
-    if (cell == -1)
-    {
+    if (cell == -1){
         cout << "Invalid cell. Use A1 to E5." << endl;
         return;
     }
-
     int row = cell / COLS;
     int col = cell % COLS;
-
     grid[row][col].content = content;
     if (!content.empty() && content[0] == '=')
         grid[row][col].isFormula = true;
     else
         grid[row][col].isFormula = false;
-
     cout << cellName(cell) << " updated to "
          << content << endl;
 }
-void viewGrid()
-{
+void viewGrid(){
     cout << left << setw(6) << "";
-
     for (int col = 0; col < COLS; col++)
         cout << setw(16) << char('A' + col);
-
     cout << endl;
-
-    for (int row = 0; row < ROWS; row++)
-    {
+    for (int row = 0; row < ROWS; row++){
         cout << setw(6) << row + 1;
-         for (int col = 0; col < COLS; col++)
-        {
+         for (int col = 0; col < COLS; col++){
             string text = grid[row][col].content;
-
             if (text.empty())
                 text = "-";
-
             cout << setw(16) << text;
         }
-
         cout << endl;
     }
 }
