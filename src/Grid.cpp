@@ -42,6 +42,14 @@ void setCell(string name, string content){
     int col = cell % COLS;
 
     grid[row][col].content = content;
+    if (!content.empty() && content[0] == '=')
+        grid[row][col].isFormula = true;
+    else
+        grid[row][col].isFormula = false;
+
+    cout << cellName(cell) << " updated to "
+         << content << endl;
+}
    
 
 
