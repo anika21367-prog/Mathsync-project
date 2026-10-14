@@ -62,6 +62,19 @@ void viewGrid()
     for (int row = 0; row < ROWS; row++)
     {
         cout << setw(6) << row + 1;
+         for (int col = 0; col < COLS; col++)
+        {
+            string text = grid[row][col].content;
+
+            if (text.empty())
+                text = "-";
+
+            cout << setw(16) << text;
+        }
+
+        cout << endl;
+    }
+}
    
 
 
