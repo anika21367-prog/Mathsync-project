@@ -35,3 +35,18 @@ bool isLetter(char ch) {
 bool isOperator(string token) {
     return token == "+" || token == "-" || token == "*" || token == "/";
 }
+
+int precedence(string token) {
+    if (token == "~") return 3; 
+    if (token == "*" || token == "/") return 2;
+    if (token == "+" || token == "-") return 1;
+    return 0;
+}
+
+bool readNumber(string text, double &number) {
+    istringstream input(text);
+    if (!(input >> number)) return false;
+    input >> ws;
+    return input.eof() && isfinite(number);
+}
+
