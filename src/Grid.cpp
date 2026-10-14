@@ -23,5 +23,11 @@ int cellNumber(string name){
       return -1;
    return (row - '1') * COLS + (column - 'A');
 }
+string cellName(int cell){
+   string name;
+   name += char('A' + cell % COLS);
+   name += char('1' + cell / COLS);
+   return name;
+}
 
 
