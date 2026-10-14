@@ -25,3 +25,13 @@ bool parseCellName(string name, int &row, int &col) {
     col = letter - 'A';
     row = name[1] - '1';
     return true;
+
+bool isDigit(char ch) {
+    return ch >= '0' && ch <= '9';
+}
+bool isLetter(char ch) {
+    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+}
+bool isOperator(string token) {
+    return token == "+" || token == "-" || token == "*" || token == "/";
+}
