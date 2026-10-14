@@ -80,6 +80,25 @@ int main()
 
             setCell(name, content);
         }
+        else if (command == "VIEW")
+        {
+            viewGrid();
+        }
+        else if (command == "EXIT")
+        {
+            break;
+        }
+        else
+        {
+            cout << "Unknown command." << endl;
+        }
+    }
+
+    return 0;
+}
+
+
+
    
 
 
