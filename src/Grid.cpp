@@ -30,6 +30,18 @@ string cellName(int cell){
    return name;
 }
 void setCell(string name, string content){
+   int cell = cellNumber(name);
+
+    if (cell == -1)
+    {
+        cout << "Invalid cell. Use A1 to E5." << endl;
+        return;
+    }
+
+    int row = cell / COLS;
+    int col = cell % COLS;
+
+    grid[row][col].content = content;
    
 
 
