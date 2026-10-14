@@ -130,4 +130,15 @@ bool toPostfix(string tokens[], int count, string postfix[],
                 operators[++top] = token;
                 needValue = true;
             }
-
+        } else {
+            if (!needValue) { error = "Missing operator between values"; return false; }
+            postfix[length++] = token;
+            needValue = false;
+        }
+    }
+    if (needValue) { error = "Empty or incomplete formula"; return false; }
+    while (top >= 0) {
+        if (operators[top] == "(") { error = "Mismatched brackets"; return false; }
+        postfix[length++] = operators[top--];
+    }
+    return true;
