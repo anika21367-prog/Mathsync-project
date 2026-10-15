@@ -198,5 +198,18 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
             }
             if (!isfinite(answer)) { error = "Numeric result out of range"; return false; }
             values[++top] = answer;
-
-
+            } else {
+            double value;
+            if (isLetter(token[0])) {
+                if (!getCellValue(token, value, error, visiting)) return false;
+            } else if (!readNumber(token, value)) {
+                error = "Invalid number";
+                return false;
+            }
+            values[++top] = value;
+        }
+    }
+    if (top != 0) { error = "Invalid formula"; return false; }
+    result = values[top];
+    return true;
+            
