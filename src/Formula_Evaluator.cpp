@@ -189,6 +189,14 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
             double right = values[top--];
             double left = values[top--];
             double answer;
-
+         if (token == "+") answer = left + right;
+            else if (token == "-") answer = left - right;
+            else if (token == "*") answer = left * right;
+            else {
+                if (right == 0) { error = "Division by zero"; return false; }
+                answer = left / right;
+            }
+            if (!isfinite(answer)) { error = "Numeric result out of range"; return false; }
+            values[++top] = answer;
 
 
