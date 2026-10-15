@@ -120,7 +120,6 @@ bool toPostfix(string tokens[], int count, string postfix[],
         } else if (isOperator(token)) {
             if (needValue) {
                 if (token != "-") { error = "Expected a number or cell"; return false; }
-                // Unary minus needs ONE operand, unlike subtraction.
                 operators[++top] = "~";
             } else {
                 while (top >= 0 && operators[top] != "(" &&
@@ -157,4 +156,20 @@ bool getCellValue(string name, double &result, string &error,
         error = "Circular reference at " + name;
         return false;
     }
+    string content = grid[row][col].content;
+    if (content.empty()) { result = 0; return true; }
+    if (!grid[row][col].isFormula) {
+        if (!readNumber(content, result)) {
+            error = name + " does not contain a number";
+            return false;
+        }
+        return true;
+    }
+    visiting[row][col] = true;
+    bool success = evaluateExpression(content.substr(1), result, error, visiting);
+    visiting[row][col] = false; 
+    return success;
+}
+
+
 
