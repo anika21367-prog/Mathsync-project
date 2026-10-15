@@ -171,5 +171,12 @@ bool getCellValue(string name, double &result, string &error,
     return success;
 }
 
+bool evaluateExpression(string expression, double &result, string &error, bool visiting[ROWS][COLS]){
+    string tokens[MAX], postfix[MAX];
+    int count, length;
+    if(!tokenize(expression, tokens, count, error)) return false;
+    if(!toPostfix(tokens, count, postfix, length, error)) return false;
+
+
 
 
