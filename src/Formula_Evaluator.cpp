@@ -177,6 +177,18 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
     if(!tokenize(expression, tokens, count, error)) return false;
     if(!toPostfix(tokens, count, postfix, length, error)) return false;
 
+    double values[MAX];
+    int top = -1;
+    for (int i = 0; i < length; i++) {
+        string token = postfix[i];
+        if (token == "~") {
+            if (top < 0) { error = "Missing value after '-'"; return false; }
+            values[top] = -values[top];
+        } else if (isOperator(token)) {
+            if (top < 1) { error = "Invalid formula"; return false; }
+            double right = values[top--];
+            double left = values[top--];
+            double answer;
 
 
 
