@@ -136,3 +136,11 @@ bool saveToFile(const string &filename) {
             }
         }
     }
+out.close();
+    if (!out) {
+        cout << "Error while writing file: " << filename << endl;
+        return false;
+    }
+    cout << "Saved " << count << " cell(s) to " << filename << endl;
+    return true;
+}
