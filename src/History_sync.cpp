@@ -117,3 +117,6 @@ void showHistory() {
                  << ": " << show(change.oldContent)
                  << " -> " << show(change.newContent) << endl;
         }
+}
+    cout << redoTop + 1 << " change(s) available to REDO." << endl;
+}
