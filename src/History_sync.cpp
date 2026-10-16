@@ -126,7 +126,7 @@ bool saveToFile(const string &filename) {
         cout << "Could not open file for writing: " << filename << endl;
         return false;
     }
-  out << "# MathSync save file\n";
+  cout << "# MathSync save file\n";
     int count = 0;
     for (int row = 0; row < ROWS; row++) {
         for (int col = 0; col < COLS; col++) {
