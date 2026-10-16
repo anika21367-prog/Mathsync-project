@@ -47,7 +47,62 @@ struct Change {
     string newContent;
 };
 
+void applyContent(int row, int col, string content) {
+    grid[row][col].content = content;
+    grid[row][col].isFormula = !content.empty() && content[0] == '=';
+}
+
+void setCell(string name, string content) {
+    int row, col;
+    if (!parseCellName(name, row, col)) {
+        cout << "Invalid cell. Use A1 to E5." << endl;
+        return;
+    }
+    string oldContent = grid[row][col].content;
+    if (oldContent == content) {
+        cout << cellName(row, col) << " already contains " << show(content) << endl;
+        return;
+    }
+    if (undoTop == MAX_HISTORY - 1) {
+        cout << "History is full. Edit not applied (maximum 100 changes)." << endl;
+        return;
+    }
+    Change change;
+    change.row = row;
+    change.col = col;
+    change.oldContent = oldContent;
+    change.newContent = content;
+    applyContent(row, col, content);
+    undoStack[++undoTop] = change;
+    redoTop = -1; 
+    cout << cellName(row, col) << " updated to " << show(content) << endl;
+}
 Change undoStack[MAX_HISTORY];
 Change redoStack[MAX_HISTORY];
 int undoTop = -1;
 int redoTop = -1;
+void undo() {
+    if (undoTop == -1) {
+        cout << "Nothing to undo." << endl;
+        return;
+    }
+    Change change = undoStack[undoTop];
+    applyContent(change.row, change.col, change.oldContent);
+    undoTop--;
+    redoStack[++redoTop] = change;
+    cout << "Undid: " << cellName(change.row, change.col)
+         << " back to " << show(change.oldContent) << endl;
+}
+
+void redo() {
+    if (redoTop == -1) {
+        cout << "Nothing to redo." << endl;
+        return;
+    }
+    Change change = redoStack[redoTop];
+    applyContent(change.row, change.col, change.newContent);
+    redoTop--;
+    undoStack[++undoTop] = change;
+    cout << "Redid: " << cellName(change.row, change.col)
+         << " set to " << show(change.newContent) << endl;
+}
