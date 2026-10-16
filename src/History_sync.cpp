@@ -157,7 +157,7 @@ bool loadFromFile(const string &filename) {
         if (!line.empty() && line[line.length() - 1] == '\r') line.erase(line.length() - 1);
         istringstream input(line);
         string name, content;
-        if (!(input >> name)) continue; // Empty or whitespace-only line
+        if (!(input >> name)) continue;
         if (name[0] == '#') continue;
         input >> ws;
         getline(input, content);
