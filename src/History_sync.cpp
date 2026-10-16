@@ -1,48 +1,50 @@
 /*history module is under Akarshak Singh. This needs to be built using linked list*/
-#include <iostream>
+include <iostream>
 #include <string>
-#include <vector>
-#include <stack>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <cctype>
-
 using namespace std;
+
 const int ROWS = 5;
 const int COLS = 5;
+const int MAX_HISTORY = 100;
 
 struct Cell {
-    string content = "";
+    string content;
     bool isFormula = false;
 };
-
 Cell grid[ROWS][COLS];
 
-bool parseCellName(const string &cellName, int &row, int &col) {
-    if (cellName.size() < 2) return false;
-
-    char colChar = toupper(cellName[0]);
-    if (colChar < 'A' || colChar > ('A' + COLS - 1)) return false;
-    col = colChar - 'A';
-
-    string rowPart = cellName.substr(1);
-    for (char c : rowPart) {
-        if (!isdigit(c)) return false;
-    }
-
-    int rowNum = stoi(rowPart);
-    if (rowNum < 1 || rowNum > ROWS) return false;
-    row = rowNum - 1;
-
+bool parseCellName(string name, int &row, int &col) {
+    if (name.length() != 2) return false;
+    char letter = name[0];
+    if (letter >= 'a' && letter <= 'z') letter = letter - 'a' + 'A';
+    if (letter < 'A' || letter >= 'A' + COLS) return false;
+    if (name[1] < '1' || name[1] >= '1' + ROWS) return false;
+    
+    row = name[1] - '1';
+    col = letter - 'A';
     return true;
 }
 
+string cellName(int row, int col) {
+    string name;
+    name += char('A' + col);
+    name += char('1' + row);
+    return name;
+}
+
+string show(string content) {
+    if (content.empty()) return "(empty)";
+    return content;
+}
+
 struct Change {
-    string cellName;
+    int row;
+    int col;
     string oldContent;
     string newContent;
 };
 
-stack<Change> undoStack;
-stack<Change> redoStack;
+
