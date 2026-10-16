@@ -168,7 +168,11 @@ bool loadFromFile(const string &filename) {
         }
         loaded[row][col].content = content;
         loaded[row][col].isFormula = content[0] == '=';
-   }
+
+    if (in.bad() || (in.fail() && !in.eof())) {
+        cout << "Read failed. Current sheet was not changed." << endl;
+        return false;
+    }
  int count = 0;
     for (int row = 0; row < ROWS; row++) {
         for (int col = 0; col < COLS; col++) {
@@ -181,7 +185,19 @@ bool loadFromFile(const string &filename) {
     cout << "Loaded " << count << " cell(s) from " << filename
          << "; skipped " << skipped << " bad line(s)." << endl;
     return true;
-    if (in.bad() || (in.fail() && !in.eof())) {
-        cout << "Read failed. Current sheet was not changed." << endl;
-        return false;
+}
+
+void viewGrid() {
+    cout << left << setw(6) << "";
+    for (int col = 0; col < COLS; col++) cout << setw(16) << char('A' + col);
+    cout << endl;
+    for (int row = 0; row < ROWS; row++) {
+        cout << setw(6) << row + 1;
+        for (int col = 0; col < COLS; col++) {
+            string text = grid[row][col].content;
+            if (text.empty()) text = "-";
+            cout << setw(16) << text;
+        }
+        cout << endl;
     }
+}
