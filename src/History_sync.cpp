@@ -169,6 +169,18 @@ bool loadFromFile(const string &filename) {
         loaded[row][col].content = content;
         loaded[row][col].isFormula = content[0] == '=';
    }
+ int count = 0;
+    for (int row = 0; row < ROWS; row++) {
+        for (int col = 0; col < COLS; col++) {
+            grid[row][col] = loaded[row][col];
+            if (!grid[row][col].content.empty()) count++;
+        }
+    }
+    undoTop = -1;
+    redoTop = -1;
+    cout << "Loaded " << count << " cell(s) from " << filename
+         << "; skipped " << skipped << " bad line(s)." << endl;
+    return true;
     if (in.bad() || (in.fail() && !in.eof())) {
         cout << "Read failed. Current sheet was not changed." << endl;
         return false;
