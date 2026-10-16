@@ -136,7 +136,7 @@ bool saveToFile(const string &filename) {
             }
         }
     }
-out.close();
+cout.close();
     if (!out) {
         cout << "Error while writing file: " << filename << endl;
         return false;
