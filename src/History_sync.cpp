@@ -121,7 +121,7 @@ void showHistory() {
     cout << redoTop + 1 << " change(s) available to REDO." << endl;
 }
 bool saveToFile(const string &filename) {
-    ofstream out(filename.c_str()); // Existing file contents are replaced.
+    ofstream out(filename.c_str()); 
     if (!out) {
         cout << "Could not open file for writing: " << filename << endl;
         return false;
