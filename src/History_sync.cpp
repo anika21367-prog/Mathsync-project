@@ -168,3 +168,8 @@ bool loadFromFile(const string &filename) {
         }
         loaded[row][col].content = content;
         loaded[row][col].isFormula = content[0] == '=';
+   }
+    if (in.bad() || (in.fail() && !in.eof())) {
+        cout << "Read failed. Current sheet was not changed." << endl;
+        return false;
+    }
