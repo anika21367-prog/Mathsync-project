@@ -212,4 +212,15 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
     if (top != 0) { error = "Invalid formula"; return false; }
     result = values[top];
     return true;
-            
+
+bool evaluateFormula(const string &formula, double &result, string &error) {
+    error.clear();
+    if (formula.empty() || formula[0] != '=') {
+        error = "Not a formula";
+        return false;
+    }
+    bool visiting[ROWS][COLS] = {};
+    return evaluateExpression(formula.substr(1), result, error, visiting);
+}
+
+
