@@ -150,3 +150,21 @@ bool loadFromFile(const string &filename) {
         cout << "Could not open file for reading: " << filename << endl;
         return false;
     }
+ Cell loaded[ROWS][COLS];
+    string line;
+    int skipped = 0;
+    while (getline(in, line)) {
+        if (!line.empty() && line[line.length() - 1] == '\r') line.erase(line.length() - 1);
+        istringstream input(line);
+        string name, content;
+        if (!(input >> name)) continue; // Empty or whitespace-only line
+        if (name[0] == '#') continue;
+        input >> ws;
+        getline(input, content);
+        int row, col;
+        if (!parseCellName(name, row, col) || content.empty()) {
+            skipped++;
+            continue;
+        }
+        loaded[row][col].content = content;
+        loaded[row][col].isFormula = content[0] == '=';
