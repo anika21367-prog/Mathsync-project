@@ -144,3 +144,9 @@ cout.close();
     cout << "Saved " << count << " cell(s) to " << filename << endl;
     return true;
 }
+bool loadFromFile(const string &filename) {
+    ifstream in(filename.c_str());
+    if (!in) {
+        cout << "Could not open file for reading: " << filename << endl;
+        return false;
+    }
