@@ -201,3 +201,39 @@ void viewGrid() {
         cout << endl;
     }
 }
+int main() {
+    cout << "MathSync - History and File Saving" << endl;
+    cout << "Commands: SET A1 10, CLEAR A1, UNDO, REDO, HISTORY,\n"
+         << "SAVE sheet.txt, LOAD sheet.txt, VIEW, EXIT" << endl;
+    cout << "Use uppercase commands. File names must not contain spaces." << endl;
+    string line;
+    while (true) {
+        cout << "\nEnter command: ";
+        if (!getline(cin, line)) break;
+        istringstream input(line);
+        string command, name;
+        if (!(input >> command)) continue;
+        if (command == "SET") {
+            string content;
+            if (!(input >> name)) { cout << "Usage: SET A1 10" << endl; continue; }
+            input >> ws;
+            getline(input, content); // Allows spaces inside content
+            if (content.empty()) { cout << "Use CLEAR to empty a cell." << endl; continue; }
+            setCell(name, content);
+        } else if (command == "CLEAR") {
+            if (input >> name) setCell(name, "");
+            else cout << "Usage: CLEAR A1" << endl;
+        } else if (command == "UNDO") undo();
+        else if (command == "REDO") redo();
+        else if (command == "HISTORY") showHistory();
+        else if (command == "VIEW") viewGrid();
+        else if (command == "EXIT") break;
+        else if (command == "SAVE" || command == "LOAD") {
+            string filename;
+            if (!(input >> filename)) { cout << "Please give a file name." << endl; continue; }
+            if (command == "SAVE") saveToFile(filename);
+            else loadFromFile(filename);
+        } else cout << "Unknown command." << endl;
+    }
+    return 0;
+}
