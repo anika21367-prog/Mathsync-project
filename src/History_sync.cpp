@@ -106,3 +106,14 @@ void redo() {
     cout << "Redid: " << cellName(change.row, change.col)
          << " set to " << show(change.newContent) << endl;
 }
+void showHistory() {
+    if (undoTop == -1) cout << "History is empty." << endl;
+    else {
+        cout << "History (newest first):" << endl;
+        int number = 1;
+        for (int i = undoTop; i >= 0; i--) {
+            Change change = undoStack[i];
+            cout << number++ << ". " << cellName(change.row, change.col)
+                 << ": " << show(change.oldContent)
+                 << " -> " << show(change.newContent) << endl;
+        }
