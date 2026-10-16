@@ -217,7 +217,7 @@ int main() {
             string content;
             if (!(input >> name)) { cout << "Usage: SET A1 10" << endl; continue; }
             input >> ws;
-            getline(input, content); // Allows spaces inside content
+            getline(input, content); 
             if (content.empty()) { cout << "Use CLEAR to empty a cell." << endl; continue; }
             setCell(name, content);
         } else if (command == "CLEAR") {
