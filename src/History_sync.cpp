@@ -47,4 +47,7 @@ struct Change {
     string newContent;
 };
 
-
+Change undoStack[MAX_HISTORY];
+Change redoStack[MAX_HISTORY];
+int undoTop = -1;
+int redoTop = -1;
