@@ -229,3 +229,23 @@ string formatNumber(double number) {
     return output.str();
 }
 
+void setCell(string name, string content) {
+    int row, col;
+    if (!parseCellName(name, row, col)) {
+        cout << "Invalid cell. Use A1 to E5." << endl;
+        return;
+    }
+    grid[row][col].content = content;
+    grid[row][col].isFormula = !content.empty() && content[0] == '=';
+    cout << name << " updated to " << content << endl;
+    void evaluateCell(string name) {
+    bool visiting[ROWS][COLS] = {};
+    double result;
+    string error;
+    if (getCellValue(name, result, error, visiting)) {
+        cout << name << " = " << formatNumber(result) << endl;
+    } else {
+        cout << "Error: " << error << endl;
+    }
+}
+
