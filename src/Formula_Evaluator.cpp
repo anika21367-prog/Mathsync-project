@@ -223,4 +223,9 @@ bool evaluateFormula(const string &formula, double &result, string &error) {
     return evaluateExpression(formula.substr(1), result, error, visiting);
 }
 
+string formatNumber(double number) {
+    ostringstream output;
+    output << setprecision(8) << number;
+    return output.str();
+}
 
