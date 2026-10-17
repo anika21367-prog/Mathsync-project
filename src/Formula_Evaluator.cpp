@@ -269,3 +269,21 @@ void viewGrid() {
         cout << endl;
     }
 }
+
+int main() {
+    cout << "MathSync - Formula Evaluator" << endl;
+    cout << "Commands: SET B1 =A1*2+3, EVAL B1, VIEW, EXIT" << endl;
+    cout << "Use uppercase commands and no spaces inside formula input." << endl;
+    string command;
+
+     while (true) {
+        cout << "\nEnter command: ";
+        if (!(cin >> command)) break;
+        if (command == "SET") {
+            string name, content;
+            if (!(cin >> name >> content)) break;
+            setCell(name, content);
+        } else if (command == "EVAL") {
+            string name;
+            if (!(cin >> name)) break;
+            evaluateCell(name);
