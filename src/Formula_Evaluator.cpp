@@ -287,3 +287,13 @@ int main() {
             string name;
             if (!(cin >> name)) break;
             evaluateCell(name);
+        } else if (command == "VIEW") viewGrid();
+        else if (command == "EXIT") break;
+        else {
+            cout << "Unknown command." << endl;
+            string rest;
+            getline(cin, rest);
+        }
+    }
+    return 0;
+}
