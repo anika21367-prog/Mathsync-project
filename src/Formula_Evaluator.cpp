@@ -248,4 +248,24 @@ void setCell(string name, string content) {
         cout << "Error: " << error << endl;
     }
 }
+void viewGrid() {
+    cout << left << setw(6) << "";
+    for (int col = 0; col < COLS; col++) cout << setw(14) << char('A' + col);
+    cout << endl;
 
+    for (int row = 0; row < ROWS; row++) {
+        cout << setw(6) << row + 1;
+        for (int col = 0; col < COLS; col++) {
+            string display = grid[row][col].content;
+            if (display.empty()) display = "-";
+            else if (grid[row][col].isFormula) {
+                double result;
+                string error;
+                if (evaluateFormula(display, result, error)) display = formatNumber(result);
+                else display = "ERR";
+            }
+            cout << setw(14) << display;
+        }
+        cout << endl;
+    }
+}
