@@ -1,23 +1,15 @@
 /*Dependency Tracker module is under Anika. Dependency Tracker is implemented using a linked list and queues.*/
+#include "mathsync.h"
 #include <iostream>
 #include <string>
 #include <iomanip>
 using namespace std;
 
-const int ROWS = 5;
-const int COLS = 5;
-const int TOTAL = ROWS * COLS;
-
-    string content;
-    bool isFormula = false;
-};
-Cell grid[ROWS][COLS];
-
 struct Node {
-    int cell;             
+    int cell;
     Node *next;
 };
-Node *head[TOTAL] = {};   
+Node *head[TOTAL] = {};
 
 struct SimpleQueue {
     int items[TOTAL];
@@ -37,27 +29,6 @@ struct SimpleQueue {
         return value;
     }
 };
-
-int cellNumber(string name) {
-    if (name.length() != 2) return -1;
-
-    char column = name[0];
-    if (column >= 'a' && column <= 'z') {
-        column = column - 'a' + 'A';
-    }
-    char row = name[1];
-    if (column < 'A' || column >= 'A' + COLS) return -1;
-    if (row < '1' || row >= '1' + ROWS) return -1;
-
-    return (row - '1') * COLS + (column - 'A');
-}
-
-string cellName(int cell) {
-    string name;
-    name += char('A' + cell % COLS);
-    name += char('1' + cell / COLS);
-    return name;
-}
 
 void addDependent(int source, int dependent) {
     Node *current = head[source];
@@ -96,7 +67,7 @@ void removeOldDependencies(int cell) {
 }
 
 bool findReferences(string formula, bool references[]) {
-    int i = 1;                 // Skip '='
+    int i = 1; 
     while (i < int(formula.length())) {
         char ch = formula[i];
         bool letter = (ch >= 'A' && ch <= 'Z') ||
@@ -156,8 +127,14 @@ bool createsCycle(int cell, bool references[]) {
 void recalculateCell(int cell) {
     int row = cell / COLS;
     int col = cell % COLS;
-    cout << "Recalculating " << cellName(cell)
-         << " (" << grid[row][col].content << ")" << endl;
+    double result;
+    string error;
+    if (evaluateFormula(grid[row][col].content, result, error)) {
+        cout << "Updated " << cellName(cell) << " = "
+             << formatNumber(result) << endl;
+    } else {
+        cout << "Error in " << cellName(cell) << ": " << error << endl;
+    }
 }
 
 void propagateUpdate(int changed) {
@@ -165,7 +142,6 @@ void propagateUpdate(int changed) {
     SimpleQueue q;
     affected[changed] = true;
     q.push(changed);
-
 
     while (!q.empty()) {
         int cell = q.pop();
@@ -180,7 +156,6 @@ void propagateUpdate(int changed) {
         }
     }
 
-    // Step 2: count how many affected inputs each cell must wait for.
     int waiting[TOTAL] = {};
     for (int source = 0; source < TOTAL; source++) {
         if (affected[source]) {
@@ -218,6 +193,19 @@ void setCell(string name, string content) {
         cout << "Invalid cell. Use A1 to E5." << endl;
         return;
     }
+    int row = cell / COLS;
+    int col = cell % COLS;
+    string oldContent = grid[row][col].content;
+
+    if (oldContent == content) {
+        cout << cellName(cell) << " already contains " << show(content) << endl;
+        return;
+    }
+    if (!canRecordChange()) {
+        cout << "History is full. Edit not applied (maximum 100 changes)." << endl;
+        return;
+    }
+
     bool formula = !content.empty() && content[0] == '=';
     bool references[TOTAL] = {};
     if (formula) {
@@ -228,9 +216,8 @@ void setCell(string name, string content) {
         }
     }
 
+    recordChange(cell, oldContent, content);
     removeOldDependencies(cell);
-    int row = cell / COLS;
-    int col = cell % COLS;
     grid[row][col].content = content;
     grid[row][col].isFormula = formula;
     for (int source = 0; source < TOTAL; source++) {
@@ -256,23 +243,6 @@ void showDependents(string name) {
     cout << "NULL" << endl;
 }
 
-void viewGrid() {
-    cout << left << setw(6) << "";
-    for (int col = 0; col < COLS; col++) {
-        cout << setw(16) << char('A' + col);
-    }
-    cout << endl;
-    for (int row = 0; row < ROWS; row++) {
-        cout << setw(6) << row + 1;
-        for (int col = 0; col < COLS; col++) {
-            string text = grid[row][col].content;
-            if (text.empty()) text = "-";
-            cout << setw(16) << text;
-        }
-        cout << endl;
-    }
-}
-
 void freeAllLists() {
     for (int cell = 0; cell < TOTAL; cell++) {
         while (head[cell] != nullptr) {
@@ -281,34 +251,4 @@ void freeAllLists() {
             delete old;
         }
     }
-}
-
-int main() {
-    string command;
-    cout << "MathSync - Dependency Tracker" << endl;
-    cout << "Commands: SET B1 =A1+5, DEPS A1, VIEW, EXIT" << endl;
-    cout << "Use uppercase commands and no spaces inside formulas." << endl;
-    while (true) {
-        cout << "\nEnter command: ";
-        if (!(cin >> command)) break;
-        if (command == "SET") {
-            string name, content;
-            if (!(cin >> name >> content)) break;
-            setCell(name, content);
-        } else if (command == "DEPS") {
-            string name;
-            if (!(cin >> name)) break;
-            showDependents(name);
-        } else if (command == "VIEW") {
-            viewGrid();
-        } else if (command == "EXIT") {
-            break;
-        } else {
-            cout << "Unknown command." << endl;
-            string rest;
-            getline(cin, rest);
-        }
-    }
-    freeAllLists();
-    return 0;
 }
