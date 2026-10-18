@@ -1,0 +1,22 @@
+#ifndef MATHSYNC_H
+#define MATHSYNC_H
+#include <string>
+using namespace std;
+
+const int ROWS = 5;
+const int COLS = 5;
+const int TOTAL = ROWS * COLS;
+const int MAX_HISTORY = 100;
+
+struct Cell {
+    string content;
+    bool isFormula = false;
+};
+
+extern Cell grid[ROWS][COLS];
+
+// grid.cpp
+int cellNumber(string name);
+bool parseCellName(string name, int &row, int &col);
+string cellName(int cell);
+void viewGrid();
