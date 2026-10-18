@@ -1,30 +1,13 @@
-/*Formula Evaluation module is under Pushpendra. To solve formulas using stack infix to postfix conversion.*/
-#include<iostream>
-#include<string>
-#include<sstream>
-#include<iomainip>
-#include<cmath>
+// Formula Evaluator module is under Pushpendra.
+#include "mathsync.h"
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <cmath>
 using namespace std;
 
-const int ROWS = 5;
-const int COLS = 5;
 const int MAX = 200;
-
-struct Cell{
-    string content;
-    bool isFormula = false;
-};
-Cell grid[ROWS][COLS];
-
-bool parseCellName(string name, int &row, int &col) {
-    if (name.length() != 2) return false;
-    char letter = name[0];
-    if (letter >= 'a' && letter <= 'z') letter = letter - 'a' + 'A';
-    if (letter < 'A' || letter >= 'A' + COLS) return false;
-    if (name[1] < '1' || name[1] >= '1' + ROWS) return false;
-    col = letter - 'A';
-    row = name[1] - '1';
-    return true;
 
 bool isDigit(char ch) {
     return ch >= '0' && ch <= '9';
@@ -35,9 +18,8 @@ bool isLetter(char ch) {
 bool isOperator(string token) {
     return token == "+" || token == "-" || token == "*" || token == "/";
 }
-
 int precedence(string token) {
-    if (token == "~") return 3; 
+    if (token == "~") return 3;
     if (token == "*" || token == "/") return 2;
     if (token == "+" || token == "-") return 1;
     return 0;
@@ -50,6 +32,7 @@ bool readNumber(string text, double &number) {
     return input.eof() && isfinite(number);
 }
 
+// Split A1+2*3 into A1, +, 2, *, 3.
 bool tokenize(string expression, string tokens[], int &count, string &error) {
     count = 0;
     if (expression.length() > MAX) {
@@ -74,7 +57,7 @@ bool tokenize(string expression, string tokens[], int &count, string &error) {
                 return false;
             }
             tokens[count++] = number;
-} else if (isLetter(ch)) {
+        } else if (isLetter(ch)) {
             string name;
             name += ch;
             i++;
@@ -98,6 +81,7 @@ bool tokenize(string expression, string tokens[], int &count, string &error) {
         }
     }
     return true;
+}
 
 bool toPostfix(string tokens[], int count, string postfix[],
                int &length, string &error) {
@@ -141,10 +125,11 @@ bool toPostfix(string tokens[], int count, string postfix[],
         postfix[length++] = operators[top--];
     }
     return true;
-
+}
 
 bool evaluateExpression(string expression, double &result, string &error,
                         bool visiting[ROWS][COLS]);
+
 bool getCellValue(string name, double &result, string &error,
                   bool visiting[ROWS][COLS]) {
     int row, col;
@@ -167,15 +152,16 @@ bool getCellValue(string name, double &result, string &error,
     }
     visiting[row][col] = true;
     bool success = evaluateExpression(content.substr(1), result, error, visiting);
-    visiting[row][col] = false; 
+    visiting[row][col] = false;
     return success;
 }
 
-bool evaluateExpression(string expression, double &result, string &error, bool visiting[ROWS][COLS]){
+bool evaluateExpression(string expression, double &result, string &error,
+                        bool visiting[ROWS][COLS]) {
     string tokens[MAX], postfix[MAX];
     int count, length;
-    if(!tokenize(expression, tokens, count, error)) return false;
-    if(!toPostfix(tokens, count, postfix, length, error)) return false;
+    if (!tokenize(expression, tokens, count, error)) return false;
+    if (!toPostfix(tokens, count, postfix, length, error)) return false;
 
     double values[MAX];
     int top = -1;
@@ -189,7 +175,7 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
             double right = values[top--];
             double left = values[top--];
             double answer;
-         if (token == "+") answer = left + right;
+            if (token == "+") answer = left + right;
             else if (token == "-") answer = left - right;
             else if (token == "*") answer = left * right;
             else {
@@ -198,7 +184,7 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
             }
             if (!isfinite(answer)) { error = "Numeric result out of range"; return false; }
             values[++top] = answer;
-            } else {
+        } else {
             double value;
             if (isLetter(token[0])) {
                 if (!getCellValue(token, value, error, visiting)) return false;
@@ -212,6 +198,7 @@ bool evaluateExpression(string expression, double &result, string &error, bool v
     if (top != 0) { error = "Invalid formula"; return false; }
     result = values[top];
     return true;
+}
 
 bool evaluateFormula(const string &formula, double &result, string &error) {
     error.clear();
@@ -229,16 +216,7 @@ string formatNumber(double number) {
     return output.str();
 }
 
-void setCell(string name, string content) {
-    int row, col;
-    if (!parseCellName(name, row, col)) {
-        cout << "Invalid cell. Use A1 to E5." << endl;
-        return;
-    }
-    grid[row][col].content = content;
-    grid[row][col].isFormula = !content.empty() && content[0] == '=';
-    cout << name << " updated to " << content << endl;
-    void evaluateCell(string name) {
+void evaluateCell(string name) {
     bool visiting[ROWS][COLS] = {};
     double result;
     string error;
@@ -247,53 +225,4 @@ void setCell(string name, string content) {
     } else {
         cout << "Error: " << error << endl;
     }
-}
-void viewGrid() {
-    cout << left << setw(6) << "";
-    for (int col = 0; col < COLS; col++) cout << setw(14) << char('A' + col);
-    cout << endl;
-
-    for (int row = 0; row < ROWS; row++) {
-        cout << setw(6) << row + 1;
-        for (int col = 0; col < COLS; col++) {
-            string display = grid[row][col].content;
-            if (display.empty()) display = "-";
-            else if (grid[row][col].isFormula) {
-                double result;
-                string error;
-                if (evaluateFormula(display, result, error)) display = formatNumber(result);
-                else display = "ERR";
-            }
-            cout << setw(14) << display;
-        }
-        cout << endl;
-    }
-}
-
-int main() {
-    cout << "MathSync - Formula Evaluator" << endl;
-    cout << "Commands: SET B1 =A1*2+3, EVAL B1, VIEW, EXIT" << endl;
-    cout << "Use uppercase commands and no spaces inside formula input." << endl;
-    string command;
-
-     while (true) {
-        cout << "\nEnter command: ";
-        if (!(cin >> command)) break;
-        if (command == "SET") {
-            string name, content;
-            if (!(cin >> name >> content)) break;
-            setCell(name, content);
-        } else if (command == "EVAL") {
-            string name;
-            if (!(cin >> name)) break;
-            evaluateCell(name);
-        } else if (command == "VIEW") viewGrid();
-        else if (command == "EXIT") break;
-        else {
-            cout << "Unknown command." << endl;
-            string rest;
-            getline(cin, rest);
-        }
-    }
-    return 0;
 }
