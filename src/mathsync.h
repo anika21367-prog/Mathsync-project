@@ -25,3 +25,9 @@ bool parseCellName(string name, int &row, int &col);
 bool evaluateFormula(const string &formula, double &result, string &error);
 string formatNumber(double number);
 void evaluateCell(string name);
+// dependency.cpp
+void addDependent(int source, int dependent);
+void removeOldDependencies(int cell);
+void freeAllLists();
+bool findReferences(string formula, bool references[]);
+bool createsCycle(int cell, bool references[]);
