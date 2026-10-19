@@ -40,3 +40,8 @@ string show(string content);
 bool canRecordChange();
 void recordChange(int cell, string oldContent, string newContent);
 void undo();
+void redo();
+void showHistory();
+bool saveToFile(const string &filename);
+bool loadFromFile(const string &filename);
+#endif
