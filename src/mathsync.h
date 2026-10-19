@@ -35,3 +35,8 @@ void recalculateCell(int cell);
 void propagateUpdate(int changed);
 void setCell(string name, string content);
 void showDependents(string name);
+// history.cpp
+string show(string content);
+bool canRecordChange();
+void recordChange(int cell, string oldContent, string newContent);
+void undo();
