@@ -31,3 +31,7 @@ void removeOldDependencies(int cell);
 void freeAllLists();
 bool findReferences(string formula, bool references[]);
 bool createsCycle(int cell, bool references[]);
+void recalculateCell(int cell);
+void propagateUpdate(int changed);
+void setCell(string name, string content);
+void showDependents(string name);
