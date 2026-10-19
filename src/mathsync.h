@@ -20,11 +20,13 @@ int cellNumber(string name);
 bool parseCellName(string name, int &row, int &col);
 string cellName(int cell);
 void viewGrid();
+
 // formula.cpp
 bool parseCellName(string name, int &row, int &col);
 bool evaluateFormula(const string &formula, double &result, string &error);
 string formatNumber(double number);
 void evaluateCell(string name);
+
 // dependency.cpp
 void addDependent(int source, int dependent);
 void removeOldDependencies(int cell);
@@ -35,6 +37,7 @@ void recalculateCell(int cell);
 void propagateUpdate(int changed);
 void setCell(string name, string content);
 void showDependents(string name);
+
 // history.cpp
 string show(string content);
 bool canRecordChange();
