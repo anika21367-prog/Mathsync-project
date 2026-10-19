@@ -17,4 +17,16 @@ int main() {
         istringstream input(line);
         string command, name;
         if (!(input >> command)) continue;
-
+          if (command == "SET") {
+            string content;
+            if (!(input >> name)) {
+                cout << "Usage: SET A1 10" << endl;
+                continue;
+            }
+            input >> ws;
+            getline(input, content);
+            if (content.empty()) cout << "Use CLEAR to empty a cell." << endl;
+            else setCell(name, content);
+        } else if (command == "EVAL") {
+            if (input >> name) evaluateCell(name);
+            else cout << "Usage: EVAL B1" << endl;
