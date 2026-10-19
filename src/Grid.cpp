@@ -1,21 +1,13 @@
 //grid.cpp
 //MathSync- Grid Storage Module
+//grid.cpp is under Riddhi Gupta
+#include "mathsync.h"
 #include <iostream>
-#include <string>
 #include <iomanip>
 #include <cctype>
 using namespace std;
 
-const int ROWS = 5;
-const int COLS = 5;
-const int TOTAL = ROWS * COLS;
-
-struct cell {
-    string content = "";
-    bool isFormula = false;
-};
-
-cell grid[ROWS][COLS];
+Cell grid[ROWS][COLS];
 
 int cellNumber(string name) {
     if (name.length() != 2)
@@ -33,33 +25,25 @@ int cellNumber(string name) {
     return (row - '1') * COLS + (column - 'A');
 }
 
+bool parseCellName(string name, int &row, int &col) {
+    if (name.length() != 2) return false;
+
+    char letter = name[0];
+    if (letter >= 'a' && letter <= 'z') letter = letter - 'a' + 'A';
+
+    if (letter < 'A' || letter >= 'A' + COLS) return false;
+    if (name[1] < '1' || name[1] >= '1' + ROWS) return false;
+
+    col = letter - 'A';
+    row = name[1] - '1';
+    return true;
+}
+
 string cellName(int cell) {
     string name;
     name += char('A' + cell % COLS);
     name += char('1' + cell / COLS);
     return name;
-}
-
-void setCell(string name, string content) {
-    int cell = cellNumber(name);
-
-    if (cell == -1) {
-        cout << "Invalid cell. Use A1 to E5." << endl;
-        return;
-    }
-
-    int row = cell / COLS;
-    int col = cell % COLS;
-
-    grid[row][col].content = content;
-
-    if (!content.empty() && content[0] == '=')
-        grid[row][col].isFormula = true;
-    else
-        grid[row][col].isFormula = false;
-
-    cout << cellName(cell) << " updated to "
-         << content << endl;
 }
 
 void viewGrid() {
@@ -84,33 +68,4 @@ void viewGrid() {
 
         cout << endl;
     }
-}
-
-int main() {
-    string command;
-
-    cout << "MathSync - Grid Module" << endl;
-    cout << "Commands: SET, VIEW, EXIT" << endl;
-
-    while (true) {
-        cout << "\nEnter command: ";
-        cin >> command;
-
-        if (command == "SET") {
-            string name, content;
-            cin >> name >> content;
-            setCell(name, content);
-        }
-        else if (command == "VIEW") {
-            viewGrid();
-        }
-        else if (command == "EXIT") {
-            break;
-        }
-        else {
-            cout << "Unknown command." << endl;
-        }
-    }
-
-    return 0;
 }
