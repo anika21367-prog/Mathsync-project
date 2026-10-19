@@ -30,3 +30,17 @@ int main() {
         } else if (command == "EVAL") {
             if (input >> name) evaluateCell(name);
             else cout << "Usage: EVAL B1" << endl;
+ } else if (command == "DEPS") {
+            if (input >> name) showDependents(name);
+            else cout << "Usage: DEPS A1" << endl;
+        } else if (command == "CLEAR") {
+            if (input >> name) setCell(name, "");
+            else cout << "Usage: CLEAR A1" << endl;
+        } else if (command == "UNDO") undo();
+        else if (command == "REDO") redo();
+        else if (command == "HISTORY") showHistory();
+        else if (command == "SYNC" || command == "LOAD") {
+            string filename;
+            if (!(input >> filename)) {
+                cout << "Please give a file name." << endl;
+                continue;
