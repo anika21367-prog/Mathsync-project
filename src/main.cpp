@@ -44,3 +44,13 @@ int main() {
             if (!(input >> filename)) {
                 cout << "Please give a file name." << endl;
                 continue;
+}
+            if (command == "SYNC") saveToFile(filename);
+            else loadFromFile(filename);
+        } else if (command == "VIEW") viewGrid();
+        else if (command == "EXIT") break;
+        else cout << "Unknown command." << endl;
+    }
+    freeAllLists();
+    return 0;
+}
