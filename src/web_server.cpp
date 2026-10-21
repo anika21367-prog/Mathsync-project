@@ -50,3 +50,18 @@ string runCommand(string command) {
     cout.rdbuf(old);
     return output.str();
 }
+
+// Escape quotes, backslashes and new lines for JSON.
+string jsonText(string text) {
+    string result = "\"";
+    for (size_t i = 0; i < text.length(); i++) {
+        char ch = text[i];
+        if (ch == '"' || ch == '\\') {
+            result += '\\';
+            result += ch;
+        } else if (ch == '\n') result += "\\n";
+        else if (ch == '\r') continue;
+        else result += ch;
+    }
+    return result + "\"";
+}
