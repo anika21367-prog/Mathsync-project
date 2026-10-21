@@ -178,3 +178,30 @@ async function sendCommand(command) {
   document.getElementById('log').textContent = data.output;
   showGrid(data.grid);
 }
+function send() {
+  const command = document.getElementById('command').value.trim();
+  if (command) sendCommand(command);
+}
+
+function quick(command) {
+  document.getElementById('command').value = command;
+  sendCommand(command);
+}
+
+function showGrid(grid) {
+  const letters = ['A','B','C','D','E'];
+  let html = '<tr><th></th>';
+  for (const letter of letters) html += '<th>' + letter + '</th>';
+  html += '</tr>';
+  for (let row = 0; row < grid.length; row++) {
+    html += '<tr><td class="rowhead">' + (row + 1) + '</td>';
+    for (let col = 0; col < grid[row].length; col++) {
+      const value = grid[row][col] || '-';
+      const cell = letters[col] + (row + 1);
+      html += '<td onclick="editCell(\'' + cell + '\',\'' +
+              value.replace(/"/g, '&quot;') + '\')">' + value + '</td>';
+    }
+    html += '</tr>';
+  }
+  document.getElementById('sheet').innerHTML = html;
+}
