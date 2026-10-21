@@ -247,3 +247,34 @@ void handleClient(int clientSocket) {
         cout << "WSAStartup failed." << endl;
         return 1;
     }
+int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (serverSocket < 0) {
+        cout << "Could not create socket." << endl;
+        return 1;
+    }
+    int reuse = 1;
+    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR,  reinterpret_cast<const char*>(&reuse), sizeof(reuse));
+
+    sockaddr_in address = {};
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(8080);
+
+    if (bind(serverSocket, (sockaddr *)&address, sizeof(address)) < 0) {
+        cout << "Could not start server on port 8080." << endl;
+        return 1;
+    }
+    listen(serverSocket, 5);
+
+    cout << "MathSync web frontend running." << endl;
+    cout << "Open http://localhost:8080 in your browser." << endl;
+    cout << "Press Ctrl+C to stop." << endl;
+
+        while (true) {
+        int clientSocket = accept(serverSocket, nullptr, nullptr);
+        if (clientSocket >= 0) handleClient(clientSocket);
+    }
+
+    WSACleanup();
+    return 0;
+}
