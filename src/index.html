@@ -19,3 +19,50 @@ button { padding:8px 12px; margin:3px; border:none; border-radius:6px;
 button.secondary { background:#64748b; }
 #log { background:#0f172a; color:#d1e7ff; padding:12px; height:180px;
        overflow:auto; border-radius:8px; font-family:monospace; white-space:pre-wrap; }
+
+</style>
+</head>
+<body>
+<h1>MathSync - Mini Spreadsheet</h1>
+
+<div class="card">
+  <input id="command" placeholder="Example: SET B1 =A1+5">
+  <button onclick="send()">Run</button>
+  <button class="secondary" onclick="quick('UNDO')">Undo</button>
+  <button class="secondary" onclick="quick('REDO')">Redo</button>
+  <button class="secondary" onclick="quick('HISTORY')">History</button>
+  <button class="secondary" onclick="quick('VIEW')">Refresh</button>
+  <button class="secondary" onclick="quick('SYNC sheet.txt')">Sync</button>
+  <button class="secondary" onclick="quick('LOAD sheet.txt')">Load</button>
+</div>
+
+<div class="card">
+  <table id="sheet"></table>
+</div>
+
+<div class="card">
+  <h3>Output</h3>
+  <div id="log">Welcome to MathSync.</div>
+</div>
+
+<script>
+async function sendCommand(command) {
+  const response = await fetch('/api/command', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({command: command})
+  });
+  const data = await response.json();
+  document.getElementById('log').textContent = data.output;
+  showGrid(data.grid);
+}
+
+function send() {
+  const command = document.getElementById('command').value.trim();
+  if (command) sendCommand(command);
+}
+
+function quick(command) {
+  document.getElementById('command').value = command;
+  sendCommand(command);
+}
