@@ -227,3 +227,23 @@ void handleClient(int clientSocket) {
     }
     string request(buffer);
     string response;
+ if (request.find("POST /api/command") == 0) {
+        size_t bodyStart = request.find("\r\n\r\n");
+        string body = bodyStart == string::npos ? "" : request.substr(bodyStart + 4);
+        string command = readCommandJSON(body);
+        string output = runCommand(command);
+        string json = "{\"output\":" + jsonText(output) +
+                      ",\"grid\":" + gridJSON() + "}";
+        response = httpResponse(json, "application/json");
+    } else {
+        response = httpResponse(indexHTML, "text/html; charset=utf-8");
+    }
+    send(clientSocket, response.c_str(), response.length(), 0);
+    close(clientSocket);
+}
+ int main() {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        cout << "WSAStartup failed." << endl;
+        return 1;
+    }
