@@ -94,4 +94,33 @@ string gridJSON() {
     }
     return json + "]";
 }
+string httpResponse(string body, string type) {
+    string header =
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type: " + type + "\r\n"
+        "Connection: close\r\n"
+        "Content-Length: " + to_string(body.length()) + "\r\n\r\n";
+    return header + body;
+}
+// Very small JSON value reader for {"command":"..."}
+// It is enough for this project because the browser sends only one field.
+string readCommandJSON(string body) {
+    size_t start = body.find("\"command\"");
+    if (start == string::npos) return "";
+    start = body.find("\"", start + 9);
+    if (start == string::npos) return "";
+    start++;
+    string command;
+    while (start < body.length() && body[start] != '"') {
+        if (body[start] == '\\' && start + 1 < body.length()) {
+            start++;
+            if (body[start] == 'n') command += '\n';
+            else command += body[start];
+        } else {
+            command += body[start];
+        }
+        start++;
+    }
+    return command;
+}
 
