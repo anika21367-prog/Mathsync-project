@@ -159,4 +159,22 @@ button.secondary { background:#64748b; }
   <button class="secondary" onclick="quick('SYNC sheet.txt')">Sync</button>
   <button class="secondary" onclick="quick('LOAD sheet.txt')">Load</button>
 </div>
+<div class="card">
+  <table id="sheet"></table>
+</div>
 
+<div class="card">
+  <h3>Output</h3>
+  <div id="log">Welcome to MathSync.</div>
+</div>
+<script>
+async function sendCommand(command) {
+  const response = await fetch('/api/command', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({command: command})
+  });
+  const data = await response.json();
+  document.getElementById('log').textContent = data.output;
+  showGrid(data.grid);
+}
