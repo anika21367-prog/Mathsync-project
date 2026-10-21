@@ -205,3 +205,25 @@ function showGrid(grid) {
   }
   document.getElementById('sheet').innerHTML = html;
 }
+function editCell(cell, value) {
+  const newValue = prompt('Enter value or formula for ' + cell, value === '-' ? '' : value);
+  if (newValue !== null) {
+    if (newValue === '') sendCommand('CLEAR ' + cell);
+    else sendCommand('SET ' + cell + ' ' + newValue);
+  }
+}
+
+sendCommand('VIEW');
+</script>
+</body>
+</html>
+)HTML";
+void handleClient(int clientSocket) {
+    char buffer[4096] = {};
+    int received = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+    if (received <= 0) {
+        close(clientSocket);
+        return;
+    }
+    string request(buffer);
+    string response;
