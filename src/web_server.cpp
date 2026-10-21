@@ -123,4 +123,40 @@ string readCommandJSON(string body) {
     }
     return command;
 }
+string indexHTML = R"HTML(<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MathSync</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f4f6f8; margin:24px; }
+h1 { color:#203a56; }
+.card { background:white; padding:18px; border-radius:10px; max-width:900px;
+        box-shadow:0 2px 8px rgba(0,0,0,.12); margin-bottom:18px; }
+table { border-collapse:collapse; width:100%; }
+th, td { border:1px solid #cbd5e1; padding:8px; text-align:left; }
+th { background:#203a56; color:white; }
+td { background:white; min-width:110px; }
+.rowhead { background:#e2e8f0; font-weight:bold; }
+input { padding:8px; width:70%; border:1px solid #94a3b8; border-radius:6px; }
+button { padding:8px 12px; margin:3px; border:none; border-radius:6px;
+         background:#2563eb; color:white; cursor:pointer; }
+button.secondary { background:#64748b; }
+#log { background:#0f172a; color:#d1e7ff; padding:12px; height:180px;
+       overflow:auto; border-radius:8px; font-family:monospace; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<h1>MathSync - Mini Spreadsheet</h1>
+
+<div class="card">
+  <input id="command" placeholder="Example: SET B1 =A1+5">
+  <button onclick="send()">Run</button>
+  <button class="secondary" onclick="quick('UNDO')">Undo</button>
+  <button class="secondary" onclick="quick('REDO')">Redo</button>
+  <button class="secondary" onclick="quick('HISTORY')">History</button>
+  <button class="secondary" onclick="quick('VIEW')">Refresh</button>
+  <button class="secondary" onclick="quick('SYNC sheet.txt')">Sync</button>
+  <button class="secondary" onclick="quick('LOAD sheet.txt')">Load</button>
+</div>
 
