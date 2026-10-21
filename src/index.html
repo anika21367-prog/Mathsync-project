@@ -84,3 +84,16 @@ function showGrid(grid) {
   }
   document.getElementById('sheet').innerHTML = html;
 }
+
+function editCell(cell, value) {
+  const newValue = prompt('Enter value or formula for ' + cell, value === '-' ? '' : value);
+  if (newValue !== null) {
+    if (newValue === '') sendCommand('CLEAR ' + cell);
+    else sendCommand('SET ' + cell + ' ' + newValue);
+  }
+}
+
+sendCommand('VIEW');
+</script>
+</body>
+</html>
