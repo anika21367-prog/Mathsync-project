@@ -80,3 +80,18 @@ string gridJSON() {
     }
     return json + "]";
 }
+// Turn the grid into JSON: [["10","=A1+5",...], ...]
+string gridJSON() {
+    string json = "[";
+    for (int row = 0; row < ROWS; row++) {
+        if (row > 0) json += ",";
+        json += "[";
+        for (int col = 0; col < COLS; col++) {
+            if (col > 0) json += ",";
+            json += jsonText(grid[row][col].content);
+        }
+        json += "]";
+    }
+    return json + "]";
+}
+
