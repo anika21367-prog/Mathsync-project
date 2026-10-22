@@ -2,25 +2,25 @@
 
 This is a near real time collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking at this moment.
 
-## The Objectives behind our project: ##
+## The Objectives behind our project ##
 
 To create a near-real-time collaborative system that lets multiple users work together on the same shared file.
 Build a computation engine that can parse, process, and evaluate formulas.
 To sync user inputs anytime someone makes changes in the system spreadsheet.
 To get to know real applications of core Data Structures and Object-Oriented Programming topics.
 
-**Team Members**
+# Team Members #
 
 Anika Sharma,
 Pushpendra Gupta,
 Riddhi Gupta,
 Akarshak Singh
 
-**Technologies Used:**
+# Technologies Used: #
 
 C++ programming language, fstream, Git/GitHub, html, javascript, css
 
-**System Architecture**
+# System Architecture #
 
 Terminal Interface — user enters commands
 Command Parser — reads and interprets commands
@@ -32,7 +32,7 @@ Recalculation & History (Queue, Stack, Linked List)
 Shared File Storage (SYNC / LOAD)
 Flow: User enters a command → Command parser interprets it and routes it to the core engine → Core engine processes grid, formula, or dependency logic → Recalculation engine updates dependent cells in correct order → Changes synced to team via SYNC/LOAD.
 
-**Set-up:**
+# Set-up: #
 
 This is a simple browser web page based project, so the project code needs to be compiled with- (for the backend)
 g++ main.cpp -o mathsync
