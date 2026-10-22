@@ -1,6 +1,6 @@
 # Mathsync-DSA project #
 
-This is a terminal-based, collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking.
+This is a near real time collaborative mini spreadsheet built using C++ for Data Structures, synchronized through shared-file sync (SYNC/LOAD) rather than live networking at this moment.
 
 ## The Objectives behind our project: ##
 
@@ -18,7 +18,7 @@ Akarshak Singh
 
 **Technologies Used:**
 
-C++ programming language, fstream, Git/GitHub
+C++ programming language, fstream, Git/GitHub, html, javascript, css
 
 **System Architecture**
 
@@ -34,7 +34,7 @@ Flow: User enters a command → Command parser interprets it and routes it to th
 
 **Set-up:**
 
-This is a terminal-based system, so the project code only needs to be compiled with the g++ compiler, e.g.:
+This is a simple browser web page based project, so the project code needs to be compiled with- (for the backend)
 g++ main.cpp -o mathsync
 ./mathsync
 The main task is to commit changes to the repository as each module is developed.
@@ -49,4 +49,4 @@ Grid Storage: core structure implemented (SET/VIEW), minor fixes pending
 Formula Evaluator: stack-based infix-to-postfix conversion and evaluation implemented standalone; integration with grid pending
 Dependency Tracker: dependency list structure and cell-name parsing implemented; dependency registration and propagation logic in progress
 History/Undo/Sync: data structures set up (undo/redo stacks); core logic not yet implemented
-Not yet started: integration of all modules into a single codebase.
+In progress: Created a simple frontend page for phase - 2. The future goals are to improve the efficiency of the frontend and implement real time synchronisation. 
