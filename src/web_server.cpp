@@ -510,3 +510,146 @@ function renderGrid(grid) {
     
     <div class="sheet-wrap"><table class="grid-table" id="sheet"></table></div>
   </section>
+    editor.type = 'text';
+      editor.value = display;
+      editor.autocomplete = 'off';
+      editor.spellcheck = false;
+      editor.setAttribute('aria-label', cell);
+      let finished = false;
+      editor.addEventListener('focus', () => { finished = false; selectCell(cell); editor.value = content; });
+      async function finishEdit(cancel) {
+        if (finished) return;
+        finished = true;
+        const newContent = editor.value.trim();
+        editor.value = display;
+        if (cancel || newContent === content) return;
+        const command = newContent === '' ? 'CLEAR ' + cell : 'SET ' + cell + ' ' + newContent;
+        try { await sendCommand(command); } catch (e) {}
+      }
+      editor.addEventListener('keydown', (e) => {
+        if (e.isComposing) return;
+        if (e.key === 'Enter') { e.preventDefault(); finishEdit(false); editor.blur(); }
+        else if (e.key === 'Escape') { e.preventDefault(); finishEdit(true); editor.blur(); }
+      });
+      editor.addEventListener('blur', () => finishEdit(false));
+      td.appendChild(editor);
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+}
+document.getElementById('formulaInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim();
+    const cmd = val === '' ? 'CLEAR ' + selectedCell : 'SET ' + selectedCell + ' ' + val;
+    e.target.blur();
+    sendCommand(cmd).catch(() => {});
+  }
+});
+async function runBatch(commands, finalMessage) {
+  for (const cmd of commands) await sendCommand(cmd, true);
+  appendLog(finalMessage);
+}
+async function loadGroupLabDemo() {
+  await sendCommand('RESIZE 12 8', true);
+  await runBatch([
+    'SET A1 18', 'SET B1 20', 'SET C1 17', 'SET D1 =A1+B1+C1', 'SET E1 =D1/3',
+    'SET A2 15', 'SET B2 16', 'SET C2 19', 'SET D2 =A2+B2+C2', 'SET E2 =D2/3',
+    'SET A3 20', 'SET B3 18', 'SET C3 18', 'SET D3 =A3+B3+C3', 'SET E3 =D3/3',
+    'SET A4 =A1+A2+A3', 'SET B4 =B1+B2+B3', 'SET C4 =C1+C2+C3', 'SET D4 =D1+D2+D3'
+  ], 'Loaded 12×8 Group Lab Demo.');
+  selectCell('D4');
+}
+async function loadCascadeDemo() {
+  await runBatch(['SET A1 10', 'SET B1 =A1*2', 'SET C1 =B1+5', 'SET D1 =C1*3', 'SET E1 =D1-B1'], 'Loaded Topological Cascade Demo.');
+  selectCell('A1');
+}
+async function testCycleDemo() {
+  await sendCommand('SET A1 =B1+1', true);
+  await sendCommand('SET B1 =A1+1', false);
+  selectCell('B1');
+}
+function isEditingCell() {
+  const active = document.activeElement;
+  return active && (active.classList.contains('cell-input') || active.id === 'formulaInput');
+}
+async function refreshSharedGrid() {
+  if (busy || polling || isEditingCell()) return;
+  polling = true;
+  const generation = commandGeneration;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch('/api/grid', { cache: 'no-store', signal: controller.signal });
+    if (!response.ok) throw new Error('Refresh failed');
+    const data = await response.json();
+    if (busy || isEditingCell() || generation !== commandGeneration) return;
+    const snapshot = JSON.stringify(data);
+    if (snapshot !== lastStateSnapshot) applyState(data);
+  } catch (err) { console.warn('Auto-sync poll skipped:', err); }
+  finally { clearTimeout(timer); polling = false; }
+}
+quick('VIEW');
+setInterval(refreshSharedGrid, 2000);
+</script>
+</body>
+</html>
+)HTML";
+
+void handleClient(SOCKET clientSocket) {
+    DWORD timeout = 5000;
+    setsockopt(clientSocket, SOL_SOCKET, SO_RCVTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
+    setsockopt(clientSocket, SOL_SOCKET, SO_SNDTIMEO, reinterpret_cast<const char*>(&timeout), sizeof(timeout));
+    string request;
+    if (!readRequest(clientSocket, request)) { closesocket(clientSocket); return; }
+    istringstream firstLine(request);
+    string method, path;
+    firstLine >> method >> path;
+    string response;
+    if (method == "POST" && path == "/api/command") {
+        size_t bodyStart = request.find("\r\n\r\n");
+        string output = runCommand(request.substr(bodyStart + 4));
+        string state = stateJSON();
+        response = httpResponse("{\"output\":" + jsonText(output) + "," + state.substr(1), "application/json; charset=utf-8");
+    } else if (method == "GET" && path == "/api/grid") {
+        response = httpResponse(stateJSON(), "application/json; charset=utf-8");
+    } else if (method == "GET" && path == "/") {
+        response = httpResponse(indexHTML, "text/html; charset=utf-8");
+    } else if (method == "GET" && path == "/favicon.ico") {
+        response = httpResponse("", "image/x-icon");
+    } else {
+        response = httpResponse("Not found.", "text/plain; charset=utf-8", "404 Not Found");
+    }
+    sendAll(clientSocket, response);
+    shutdown(clientSocket, SD_SEND);
+    closesocket(clientSocket);
+}
+
+int main() {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) { cout << "WSAStartup failed." << endl; return 1; }
+    SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (serverSocket == INVALID_SOCKET) { cout << "Could not create socket. Error: " << WSAGetLastError() << endl; WSACleanup(); return 1; }
+    sockaddr_in address = {};
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = htonl(INADDR_ANY);
+    address.sin_port = htons(8080);
+    if (bind(serverSocket, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == SOCKET_ERROR) {
+        cout << "Could not start server on port 8080. Error: " << WSAGetLastError() << endl;
+        closesocket(serverSocket); WSACleanup(); return 1;
+    }
+    if (listen(serverSocket, SOMAXCONN) == SOCKET_ERROR) {
+        cout << "Could not listen. Error: " << WSAGetLastError() << endl;
+        closesocket(serverSocket); WSACleanup(); return 1;
+    }
+    cout << "MathSync web frontend running.\nOpen http://localhost:8080 in your browser.\nPress Ctrl+C to stop." << endl;
+    while (true) {
+        SOCKET clientSocket = accept(serverSocket, nullptr, nullptr);
+        if (clientSocket == INVALID_SOCKET) { cout << "Accept failed. Error: " << WSAGetLastError() << endl; break; }
+        handleClient(clientSocket);
+    }
+    closesocket(serverSocket);
+    WSACleanup();
+    return 0;
+}
