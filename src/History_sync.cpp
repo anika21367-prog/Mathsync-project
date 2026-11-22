@@ -91,3 +91,70 @@ bool saveToFile(const string &filename) {
             }
         }
     }
+ out.close();
+    if (!out) { cout << "Error while writing file: " << filename << endl; return false; }
+    cout << "Saved " << count << " cell(s) to " << filename << endl;
+    return true;
+}
+
+bool loadFromFile(const string &filename) {
+    ifstream in(filename.c_str());
+    if (!in) { cout << "Could not open file for reading: " << filename << endl; return false; }
+    Cell loaded[MAX_ROWS][MAX_COLS];
+    int nextRows = activeRows, nextCols = activeCols;
+    string line;
+    int skipped = 0;
+    while (getline(in, line)) {
+        if (!line.empty() && line[line.length() - 1] == '\r') line.erase(line.length() - 1);
+        istringstream input(line);
+        string first;
+        if (!(input >> first)) continue;
+        if (first[0] == '#') continue;
+        if (first == "SIZE") {
+            int r, c;
+            if ((input >> r >> c) && r >= 1 && r <= MAX_ROWS && c >= 1 && c <= MAX_COLS) {
+                nextRows = r; nextCols = c;
+            } else skipped++;
+            continue;
+        }
+ string content;
+        input >> ws;
+        getline(input, content);
+        int row, col;
+        if (!parseCellName(first, row, col) || content.empty()) { skipped++; continue; }
+        loaded[row][col].content = content;
+        loaded[row][col].isFormula = content[0] == '=';
+    }
+    if (in.bad() || (in.fail() && !in.eof())) {
+        cout << "Read failed. Current sheet was not changed." << endl;
+        return false;
+    }
+    activeRows = nextRows; activeCols = nextCols;
+    int count = 0;
+    for (int row = 0; row < MAX_ROWS; row++) {
+        for (int col = 0; col < MAX_COLS; col++) {
+            grid[row][col] = loaded[row][col];
+            if (row < activeRows && col < activeCols && !grid[row][col].content.empty()) count++;
+        }
+    }
+    undoTop = -1; redoTop = -1;
+    freeAllLists();
+    for (int cell = 0; cell < activeTotalCells(); cell++) {
+        int r = cell / activeCols, c = cell % activeCols;
+        if (grid[r][c].isFormula) {
+            bool references[MAX_TOTAL] = {};
+            if (findReferences(grid[r][c].content, references)) {
+                for (int source = 0; source < activeTotalCells(); source++) {
+                    if (references[source]) addDependent(source, cell);
+                }
+            }
+        }
+    }
+    for (int cell = 0; cell < activeTotalCells(); cell++) {
+        int r = cell / activeCols, c = cell % activeCols;
+        if (grid[r][c].isFormula) recalculateCell(cell);
+    }
+    cout << "Loaded " << count << " cell(s) (" << activeRows << "x" << activeCols
+         << ") from " << filename << "; skipped " << skipped << " bad line(s)." << endl;
+    return true;
+}
