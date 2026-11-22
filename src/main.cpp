@@ -24,3 +24,34 @@ int main() {
                 cout << "Usage: SET A1 10" << endl;
                 continue;
             }
+input >> ws;
+            getline(input, content);
+            if (content.empty()) cout << "Use CLEAR to empty a cell." << endl;
+            else setCell(name, content);
+        } else if (command == "EVAL") {
+            if (input >> name) evaluateCell(name);
+            else cout << "Usage: EVAL B1" << endl;
+        } else if (command == "DEPS") {
+            if (input >> name) showDependents(name);
+            else cout << "Usage: DEPS A1" << endl;
+        } else if (command == "CLEAR") {
+            if (input >> name) setCell(name, "");
+            else cout << "Usage: CLEAR A1" << endl;
+        } else if (command == "UNDO") undo();
+        else if (command == "REDO") redo();
+        else if (command == "HISTORY") showHistory();
+        else if (command == "SYNC" || command == "LOAD") {
+            string filename;
+            if (!(input >> filename)) {
+                cout << "Please give a file name." << endl;
+                continue;
+            }
+            if (command == "SYNC") saveToFile(filename);
+            else loadFromFile(filename);
+        } else if (command == "VIEW") viewGrid();
+        else if (command == "EXIT") break;
+        else cout << "Unknown command." << endl;
+    }
+    freeAllLists();
+    return 0;
+}
