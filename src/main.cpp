@@ -24,7 +24,7 @@ int main() {
                 cout << "Usage: SET A1 10" << endl;
                 continue;
             }
-input >> ws;
+            input >> ws;
             getline(input, content);
             if (content.empty()) cout << "Use CLEAR to empty a cell." << endl;
             else setCell(name, content);
