@@ -5,67 +5,24 @@
 #include <iostream>
 #include <iomanip>
 #include <cctype>
+#include <cstdlib>
 using namespace std;
 
-Cell grid[ROWS][COLS];
-
-int cellNumber(string name) {
-    if (name.length() != 2)
-        return -1;
-
-    char column = toupper(name[0]);
-    char row = name[1];
-
-    if (column < 'A' || column >= 'A' + COLS)
-        return -1;
-
-    if (row < '1' || row >= '1' + ROWS)
-        return -1;
-
-    return (row - '1') * COLS + (column - 'A');
-}
+int activeRows = 10;
+int activeCols = 10;
+Cell grid[MAX_ROWS][MAX_COLS];
+int activeTotalCells() { return activeRows * activeCols; }
 
 bool parseCellName(string name, int &row, int &col) {
-    if (name.length() != 2) return false;
-
-    char letter = name[0];
-    if (letter >= 'a' && letter <= 'z') letter = letter - 'a' + 'A';
-
-    if (letter < 'A' || letter >= 'A' + COLS) return false;
-    if (name[1] < '1' || name[1] >= '1' + ROWS) return false;
-
-    col = letter - 'A';
-    row = name[1] - '1';
-    return true;
-}
-
-string cellName(int cell) {
-    string name;
-    name += char('A' + cell % COLS);
-    name += char('1' + cell / COLS);
-    return name;
-}
-
-void viewGrid() {
-    cout << left << setw(6) << "";
-
-    for (int col = 0; col < COLS; col++)
-        cout << setw(16) << char('A' + col);
-
-    cout << endl;
-
-    for (int row = 0; row < ROWS; row++) {
-        cout << setw(6) << row + 1;
-
-        for (int col = 0; col < COLS; col++) {
-            string text = grid[row][col].content;
-
-            if (text.empty())
-                text = "-";
-
-            cout << setw(16) << text;
-        }
-
-        cout << endl;
+    if (name.length() < 2 || name.length() > 3) return false;
+    char letter = static_cast<char>(toupper(static_cast<unsigned char>(name[0])));
+    if (letter < 'A' || letter >= 'A' + activeCols) return false;
+    for (size_t i = 1; i < name.length(); i++) {
+        if (!isdigit(static_cast<unsigned char>(name[i]))) return false;
     }
+    int rowNum = atoi(name.substr(1).c_str());
+    if (rowNum < 1 || rowNum > activeRows) return false;
+    col = letter - 'A';
+    row = rowNum - 1;
+    return true;
 }
