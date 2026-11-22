@@ -26,3 +26,16 @@ bool parseCellName(string name, int &row, int &col) {
     row = rowNum - 1;
     return true;
 }
+int cellNumber(string name) {
+    int row = -1, col = -1;
+    if (!parseCellName(name, row, col)) return -1;
+    return row * activeCols + col;
+}
+
+string cellName(int cell) {
+    if (cell < 0 || cell >= activeTotalCells()) return "";
+    int row = cell / activeCols;
+    int col = cell % activeCols;
+    return string(1, static_cast<char>('A' + col)) + to_string(row + 1);
+}
+
