@@ -1,23 +1,19 @@
-// Formula Evaluator module is under Pushpendra.
+// Formula Evaluator module is under Pushpendra (Resizable Grid Compatibility)
 #include "mathsync.h"
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <cctype>
+#include <cstdlib>
 using namespace std;
 
 const int MAX = 200;
 
-bool isDigit(char ch) {
-    return ch >= '0' && ch <= '9';
-}
-bool isLetter(char ch) {
-    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
-}
-bool isOperator(string token) {
-    return token == "+" || token == "-" || token == "*" || token == "/";
-}
+bool isDigitChar(char ch) { return ch >= '0' && ch <= '9'; }
+bool isLetterChar(char ch) { return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'); }
+bool isOperator(string token) { return token == "+" || token == "-" || token == "*" || token == "/"; }
 int precedence(string token) {
     if (token == "~") return 3;
     if (token == "*" || token == "/") return 2;
@@ -32,7 +28,6 @@ bool readNumber(string text, double &number) {
     return input.eof() && isfinite(number);
 }
 
-// Split A1+2*3 into A1, +, 2, *, 3.
 bool tokenize(string expression, string tokens[], int &count, string &error) {
     count = 0;
     if (expression.length() > MAX) {
@@ -44,12 +39,11 @@ bool tokenize(string expression, string tokens[], int &count, string &error) {
         char ch = expression[i];
         if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
             i++;
-        } else if (isDigit(ch) || ch == '.') {
+        } else if (isDigitChar(ch) || ch == '.') {
             string number;
             while (i < int(expression.length()) &&
-                   (isDigit(expression[i]) || expression[i] == '.')) {
-                number += expression[i];
-                i++;
+                   (isDigitChar(expression[i]) || expression[i] == '.')) {
+                number += expression[i++];
             }
             double value;
             if (!readNumber(number, value)) {
@@ -57,17 +51,16 @@ bool tokenize(string expression, string tokens[], int &count, string &error) {
                 return false;
             }
             tokens[count++] = number;
-        } else if (isLetter(ch)) {
+        } else if (isLetterChar(ch)) {
             string name;
-            name += ch;
+            name += static_cast<char>(toupper(static_cast<unsigned char>(ch)));
             i++;
-            while (i < int(expression.length()) && isDigit(expression[i])) {
-                name += expression[i];
-                i++;
+            while (i < int(expression.length()) && isDigitChar(expression[i])) {
+                name += expression[i++];
             }
             int row, col;
             if (!parseCellName(name, row, col)) {
-                error = "Invalid cell reference: " + name;
+                error = "Invalid or out-of-range cell reference: " + name;
                 return false;
             }
             tokens[count++] = name;
@@ -128,10 +121,10 @@ bool toPostfix(string tokens[], int count, string postfix[],
 }
 
 bool evaluateExpression(string expression, double &result, string &error,
-                        bool visiting[ROWS][COLS]);
+                        bool visiting[MAX_ROWS][MAX_COLS]);
 
 bool getCellValue(string name, double &result, string &error,
-                  bool visiting[ROWS][COLS]) {
+                  bool visiting[MAX_ROWS][MAX_COLS]) {
     int row, col;
     if (!parseCellName(name, row, col)) {
         error = "Invalid cell reference: " + name;
@@ -157,12 +150,11 @@ bool getCellValue(string name, double &result, string &error,
 }
 
 bool evaluateExpression(string expression, double &result, string &error,
-                        bool visiting[ROWS][COLS]) {
+                        bool visiting[MAX_ROWS][MAX_COLS]) {
     string tokens[MAX], postfix[MAX];
     int count, length;
     if (!tokenize(expression, tokens, count, error)) return false;
     if (!toPostfix(tokens, count, postfix, length, error)) return false;
-
     double values[MAX];
     int top = -1;
     for (int i = 0; i < length; i++) {
@@ -186,7 +178,7 @@ bool evaluateExpression(string expression, double &result, string &error,
             values[++top] = answer;
         } else {
             double value;
-            if (isLetter(token[0])) {
+            if (isLetterChar(token[0])) {
                 if (!getCellValue(token, value, error, visiting)) return false;
             } else if (!readNumber(token, value)) {
                 error = "Invalid number";
@@ -206,7 +198,7 @@ bool evaluateFormula(const string &formula, double &result, string &error) {
         error = "Not a formula";
         return false;
     }
-    bool visiting[ROWS][COLS] = {};
+    bool visiting[MAX_ROWS][MAX_COLS] = {};
     return evaluateExpression(formula.substr(1), result, error, visiting);
 }
 
@@ -217,7 +209,7 @@ string formatNumber(double number) {
 }
 
 void evaluateCell(string name) {
-    bool visiting[ROWS][COLS] = {};
+    bool visiting[MAX_ROWS][MAX_COLS] = {};
     double result;
     string error;
     if (getCellValue(name, result, error, visiting)) {
