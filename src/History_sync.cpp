@@ -41,6 +41,7 @@ void recordChange(int cell, string oldContent, string newContent) {
     undoStack[++undoTop] = change;
     redoTop = -1;
 }
+
 void undo() {
     if (undoTop == -1) { cout << "Nothing to undo." << endl; return; }
     Change change = undoStack[undoTop];
@@ -91,7 +92,7 @@ bool saveToFile(const string &filename) {
             }
         }
     }
- out.close();
+    out.close();
     if (!out) { cout << "Error while writing file: " << filename << endl; return false; }
     cout << "Saved " << count << " cell(s) to " << filename << endl;
     return true;
@@ -117,7 +118,7 @@ bool loadFromFile(const string &filename) {
             } else skipped++;
             continue;
         }
- string content;
+        string content;
         input >> ws;
         getline(input, content);
         int row, col;
