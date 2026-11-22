@@ -407,6 +407,106 @@ function buildShuntingYardPreview(formula) {
   let needValue = true;
   for (const tok of rawTokens) {
     if (tok === '(') ops.push(tok);
- 
+    else if (tok === ')') {
+      while (ops.length && ops[ops.length - 1] !== '(') postfix.push(ops.pop());
+      if (ops.length) ops.pop();
+    } else if (['+', '-', '*', '/'].includes(tok)) {
+      if (needValue && tok === '-') ops.push('~');
+      else {
+        while (ops.length && ops[ops.length - 1] !== '(' && prec[ops[ops.length - 1]] >= prec[tok]) postfix.push(ops.pop());
+        ops.push(tok); needValue = true;
+      }
+    } else { postfix.push(tok.toUpperCase()); needValue = false; }
+  }
+  while (ops.length) postfix.push(ops.pop());
+  return postfix;
+}
+function updateInspector() {
+  const { row, col } = parseCellCoords(selectedCell);
+  if (row < 0 || row >= currentState.rows || col < 0 || col >= currentState.cols) selectedCell = 'A1';
+  document.getElementById('activeCellBadge').textContent = selectedCell;
+  document.getElementById('inspectTarget').textContent = 'Inspecting: ' + selectedCell;
+  const coords = parseCellCoords(selectedCell);
+  const cellData = (currentState.grid[coords.row] && currentState.grid[coords.row][coords.col]) || { content: '', display: '', isFormula: false, error: '' };
+  const fInput = document.getElementById('formulaInput');
+  if (document.activeElement !== fInput) fInput.value = cellData.content || '';
+  document.getElementById('depChainBox').textContent = (currentState.deps && currentState.deps[selectedCell]) || (selectedCell + ' -> NULL');
+  const precedents = extractPrecedents(cellData.content);
+  const dependents = extractDependents(selectedCell);
+  document.getElementById('refSummary').textContent =
+    `Upstream inputs: ${precedents.length ? precedents.join(', ') : 'None'}  •  Downstream dependents: ${dependents.length ? dependents.join(', ') : 'None'}`;
+  const rpnBox = document.getElementById('rpnBox');
+  const rpnTokens = document.getElementById('rpnTokens');
+  rpnTokens.replaceChildren();
+  if (cellData.isFormula) {
+    const postfix = buildShuntingYardPreview(cellData.content);
+    if (cellData.error) rpnBox.textContent = 'Evaluator Error: ' + cellData.error;
+    else if (postfix) {
+      rpnBox.textContent = 'Postfix (RPN) Queue: ' + postfix.join(' ');
+      postfix.forEach(t => {
+        const span = document.createElement('span');
+        span.className = 'tok' + (['+','-','*','/','~'].includes(t) ? ' op' : '');
+        span.textContent = t;
+        rpnTokens.appendChild(span);
+      });
+    }
+  } else {
+    rpnBox.textContent = cellData.content
+      ? `Literal constant (${cellData.content}) — bypasses postfix stack`
+      : 'Empty cell — select a formula cell (=...) to inspect postfix stack';
+  }
+  document.getElementById('historyBox').textContent = (currentState.history && currentState.history.trim()) || 'History is empty.';
+  document.querySelectorAll('.cell-td').forEach(td => {
+    const id = td.dataset.cell;
+    td.classList.toggle('is-selected', id === selectedCell);
+    td.classList.toggle('is-precedent', precedents.includes(id));
+    td.classList.toggle('is-dependent', dependents.includes(id));
+  });
+}
+function selectCell(cell) { selectedCell = cell; updateInspector(); }
+function applyState(state) {
+  currentState = state;
+  lastStateSnapshot = JSON.stringify(state);
+  document.getElementById('gridSizePill').textContent = `Grid: ${state.rows}×${state.cols} (Max ${state.maxRows}×${state.maxCols})`;
+  document.getElementById('matrixTitle').textContent = `Spreadsheet Matrix (${state.rows} × ${state.cols})`;
+  renderGrid(state.grid || []);
+  updateInspector();
+}
+function renderGrid(grid) {
+  const table = document.getElementById('sheet');
+  table.replaceChildren();
+  const header = document.createElement('tr');
+  header.appendChild(document.createElement('th'));
+  const columns = grid.length ? grid[0].length : 0;
+  for (let col = 0; col < columns; col++) {
+    const th = document.createElement('th');
+    th.textContent = colToLetter(col);
+    header.appendChild(th);
+  }
+  table.appendChild(header);
+  for (let row = 0; row < grid.length; row++) {
+    const tr = document.createElement('tr');
+    const rowHead = document.createElement('td');
+    rowHead.className = 'rowhead';
+    rowHead.textContent = row + 1;
+    tr.appendChild(rowHead);
+    for (let col = 0; col < grid[row].length; col++) {
+      const cell = colToLetter(col) + (row + 1);
+      const data = grid[row][col];
+      const content = data.content || '', display = data.display || '';
+      const td = document.createElement('td');
+      td.className = 'cell-td';
+      td.dataset.cell = cell;
+      if (data.isFormula) td.classList.add('is-formula');
+      if (display === 'ERR') td.classList.add('is-error');
+      if (data.isFormula) {
+        const badge = document.createElement('span');
+        badge.className = 'cell-tag';
+        badge.textContent = display === 'ERR' ? 'ERR' : 'fx';
+        td.appendChild(badge);
+      }
+      const editor = document.createElement('input');
+      editor.className = 'cell-input';
+    
     <div class="sheet-wrap"><table class="grid-table" id="sheet"></table></div>
   </section>
