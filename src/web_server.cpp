@@ -308,5 +308,105 @@ string indexHTML = R"HTML(<!DOCTYPE html>
         <span><i class="swatch" style="background:#dc2626;"></i> Error</span>
       </div>
     </div>
+    <aside class="panel inspector-panel">
+    <div class="panel-header">
+      <div class="panel-title">Live C++ Data Structures Inspector</div>
+      <span style="font-size:11px;color:#93c5fd;" id="inspectTarget">Cell: A1</span>
+    </div>
+    <div class="dsa-grid">
+      <div class="dsa-card">
+        <div class="dsa-card-title">1. Adjacency Linked List <span class="tag">dependency_tracker.cpp</span></div>
+        <div class="chain-box" id="depChainBox">A1 -> NULL</div>
+        <div style="font-size:11.5px;color:#cbd5e1;margin-top:6px;" id="refSummary">Upstream inputs: None • Downstream dependents: None</div>
+      </div>
+      <div class="dsa-card">
+        <div class="dsa-card-title">2. Shunting-Yard & Postfix (RPN) Stack <span class="tag">formula_evaluator.cpp</span></div>
+        <div class="chain-box" id="rpnBox">Select a formula cell (=...) to inspect postfix stack</div>
+        <div class="token-row" id="rpnTokens"></div>
+      </div>
+      <div class="dsa-card">
+        <div class="dsa-card-title">3. Undo / Redo Stack State <span class="tag">history.cpp</span></div>
+        <div class="chain-box" id="historyBox" style="max-height:72px;overflow-y:auto;white-space:pre-wrap;">History is empty.</div>
+      </div>
+      <div class="dsa-card" style="flex:1;display:flex;flex-direction:column;">
+        <div class="dsa-card-title">4. C++ Kernel Stdout & CLI <span class="tag">POST /api/command</span></div>
+        <pre id="log">Connecting to MathSync C++ server...</pre>
+        <form class="cli-bar" onsubmit="runCliInput(event)">
+          <input id="cliCommand" type="text" placeholder="Try: RESIZE 15 12, SET B2 =A2*2, DEPS A2..." autocomplete="off">
+          <button type="submit" class="primary">Run</button>
+        </form>
+      </div>
+    </div>
+  </aside>
+</main>
+<script>
+let busy = false, polling = false, commandGeneration = 0, lastStateSnapshot = '', selectedCell = 'A1';
+let currentState = { rows: 10, cols: 10, maxRows: 30, maxCols: 26, grid: [], deps: {}, history: '' };
+
+function colToLetter(col) { return String.fromCharCode(65 + col); }
+function parseCellCoords(cell) {
+  return { col: cell.charCodeAt(0) - 65, row: parseInt(cell.slice(1), 10) - 1 };
+}
+function setBusy(value) {
+  busy = value;
+  document.querySelectorAll('button, .cell-input, #formulaInput').forEach(el => { el.disabled = value; });
+}
+function appendLog(text) {
+  document.getElementById('log').textContent = (text && text.trim()) ? text.trim() : 'Command executed.';
+}
+async function sendCommand(command, silent = false) {
+  if (busy) return null;
+  commandGeneration++;
+  setBusy(true);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+  try {
+    const response = await fetch('/api/command', {
+      method: 'POST', headers: { 'Content-Type': 'text/plain; charset=UTF-8' },
+      body: command, cache: 'no-store', signal: controller.signal
+    });
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const data = await response.json();
+    if (!silent) appendLog(data.output);
+    applyState(data);
+    return data;
+  } catch (err) {
+    appendLog('Server request failed. Verify mathsync-web.exe is running and click Refresh.');
+    throw err;
+  } finally { clearTimeout(timer); setBusy(false); }
+}
+function quick(command) { sendCommand(command).catch(() => {}); }
+function resizeTo(r, c) { quick(`RESIZE ${r} ${c}`); }
+function stepSize(dr, dc) {
+  const nextR = Math.min(currentState.maxRows || 30, Math.max(1, (currentState.rows || 10) + dr));
+  const nextC = Math.min(currentState.maxCols || 26, Math.max(1, (currentState.cols || 10) + dc));
+  resizeTo(nextR, nextC);
+}
+function runCliInput(e) {
+  e.preventDefault();
+  const input = document.getElementById('cliCommand');
+  const cmd = input.value.trim();
+  if (!cmd) return;
+  input.value = '';
+  sendCommand(cmd).catch(() => {});
+}
+function extractPrecedents(formula) {
+  if (!formula || !formula.startsWith('=')) return [];
+  return [...new Set(formula.toUpperCase().match(/[A-Z]([1-9]|[1-2][0-9]|30)/g) || [])];
+}
+function extractDependents(cell) {
+  const raw = (currentState.deps && currentState.deps[cell]) || '';
+  return raw.split('->').map(s => s.trim()).filter(s => s && s !== cell && s !== 'NULL');
+}
+function buildShuntingYardPreview(formula) {
+  if (!formula || !formula.startsWith('=')) return null;
+  const rawTokens = formula.slice(1).trim().match(/[A-Za-z][0-9]*|\d*\.?\d+|[+\-*/()]/g);
+  if (!rawTokens) return null;
+  const prec = { '~': 3, '*': 2, '/': 2, '+': 1, '-': 1 };
+  const ops = [], postfix = [];
+  let needValue = true;
+  for (const tok of rawTokens) {
+    if (tok === '(') ops.push(tok);
+ 
     <div class="sheet-wrap"><table class="grid-table" id="sheet"></table></div>
   </section>
